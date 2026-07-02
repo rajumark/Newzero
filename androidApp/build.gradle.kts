@@ -23,6 +23,7 @@ kotlin {
         implementation(libs.androidx.core.splashscreen)
         implementation(libs.napier)
         implementation(libs.multiplatform.settings)
+        implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
         implementation(libs.kotlinx.serialization.json)
         implementation(libs.ktor.core)
     }

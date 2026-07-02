@@ -1,7 +1,7 @@
 //
 
 import SwiftUI
-import RssReader
+import Newzero
 
 struct FeedsList: ConnectedView {
     
@@ -12,13 +12,13 @@ struct FeedsList: ConnectedView {
         let onRemove: (String) -> ()
     }
     
-    func map(state: FeedState, dispatch: @escaping DispatchFunction) -> Props {
-        return Props(defaultFeeds: state.feeds.filter { $0.isDefault },
-                     userFeeds: state.feeds.filter { !$0.isDefault },
+    func map(state: ArticleState, dispatch: @escaping DispatchFunction) -> Props {
+        return Props(defaultFeeds: state.sources.filter { $0.isPreloaded },
+                     userFeeds: state.sources.filter { !$0.isPreloaded },
                      onAdd: { url in
-                        dispatch(FeedAction.Add(url: url))
+                        dispatch(ArticleAction.Add(url: url))
                      }, onRemove: { url in
-                        dispatch(FeedAction.Delete(url: url))
+                        dispatch(ArticleAction.Delete(url: url))
                      })
     }
     
@@ -29,7 +29,7 @@ struct FeedsList: ConnectedView {
             ForEach(props.defaultFeeds) { FeedRow(feed: $0) }
             ForEach(props.userFeeds) { FeedRow(feed: $0) }
                 .onDelete( perform: { set in
-                    set.map { props.userFeeds[$0] }.forEach { props.onRemove($0.sourceUrl) }
+                    set.map { props.userFeeds[$0] }.forEach { props.onRemove($0.feedUrl) }
                 })
         }
         .alert(isPresented: $showsAlert, TextAlert(title: "Title") {
@@ -48,4 +48,3 @@ struct FeedsList: ConnectedView {
 }
 
 extension RssFeed: Identifiable { }
-

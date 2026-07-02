@@ -17,21 +17,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rajumark.newzero.app.FeedAction
-import com.rajumark.newzero.app.FeedStore
-import com.rajumark.newzero.domain.Item
-import com.rajumark.newzero.domain.RssFeed
+import com.rajumark.newzero.app.ArticleAction
+import com.rajumark.newzero.app.ArticleStore
+import com.rajumark.newzero.domain.ArticleItem
+import com.rajumark.newzero.domain.ArticleFeed
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainFeed(
-    store: FeedStore,
-    onPostClick: (Item) -> Unit,
+    store: ArticleStore,
+    onPostClick: (ArticleItem) -> Unit,
     onEditClick: () -> Unit,
 ) {
-    val state = store.observeState().collectAsState()
-    val posts = remember(state.value.feeds, state.value.selectedFeed) {
-        (state.value.selectedFeed?.channel?.item ?: state.value.feeds.flatMap { it.channel?.item ?: emptyList() })
+    val state = store.stateFlow().collectAsState()
+    val posts = remember(state.value.sources, state.value.selectedFeed) {
+        (state.value.selectedFeed?.channel?.item ?: state.value.sources.flatMap { it.channel?.item ?: emptyList() })
             .sortedByDescending { it.pubDate }
     }
     Column {
@@ -43,11 +43,11 @@ fun MainFeed(
             listState = listState
         ) { post -> onPostClick(post) }
         MainFeedBottomBar(
-            feeds = state.value.feeds,
+            feeds = state.value.sources,
             selectedFeed = state.value.selectedFeed,
             onFeedClick = { feed ->
                 coroutineScope.launch { listState.scrollToItem(0) }
-                store.dispatch(FeedAction.SelectFeed(feed))
+                store.dispatch(ArticleAction.SelectFeed(feed))
             },
             onEditClick = onEditClick
         )
@@ -61,15 +61,15 @@ fun MainFeed(
 
 private sealed class Icons {
     object All : Icons()
-    class FeedIcon(val feed: RssFeed) : Icons()
+    class FeedIcon(val feed: ArticleFeed) : Icons()
     object Edit : Icons()
 }
 
 @Composable
 fun MainFeedBottomBar(
-    feeds: List<RssFeed>,
-    selectedFeed: RssFeed?,
-    onFeedClick: (RssFeed?) -> Unit,
+    feeds: List<ArticleFeed>,
+    selectedFeed: ArticleFeed?,
+    onFeedClick: (ArticleFeed?) -> Unit,
     onEditClick: () -> Unit
 ) {
     val items = buildList {

@@ -25,17 +25,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.rajumark.newzero.domain.Item
-import com.rajumark.newzero.domain.getImageUrl
+import com.rajumark.newzero.domain.ArticleItem
+import com.rajumark.newzero.domain.extractImage
 import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
 
 @Composable
 fun PostList(
     modifier: Modifier,
-    posts: List<Item>,
+    posts: List<ArticleItem>,
     listState: LazyListState,
-    onClick: (Item) -> Unit
+    onClick: (ArticleItem) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     LazyColumn(
@@ -60,7 +60,7 @@ fun PostList(
 @OptIn(ExperimentalTime::class)
 @Composable
 fun PostItem(
-    item: Item,
+    item: ArticleItem,
     onClick: () -> Unit
 ) {
     val padding = 16.dp
@@ -79,7 +79,7 @@ fun PostItem(
                         text = title
                     )
                 }
-                item.getImageUrl()?.let { url ->
+                item.extractImage()?.let { url ->
                     Spacer(modifier = Modifier.size(padding))
                     AsyncImage(
                         model = url,

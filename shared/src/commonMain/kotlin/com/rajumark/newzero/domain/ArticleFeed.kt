@@ -10,26 +10,26 @@ import nl.adaptivity.xmlutil.serialization.XmlValue
 
 @Serializable
 @XmlSerialName("rss", "", "")
-data class RssFeed(
+data class ArticleFeed(
     val version: String?,
-    var sourceUrl: String = "",
-    var isDefault: Boolean = false,
-    @XmlSerialName("channel", "", "") val channel: Channel?
+    var feedUrl: String = "",
+    var isPreloaded: Boolean = false,
+    @XmlSerialName("channel", "", "") val channel: FeedChannel?
 )
 
 @Serializable
-data class Channel(
+data class FeedChannel(
     @XmlElement val title: String?,
     @XmlElement val description: String?,
     @XmlElement val link: String?,
     @XmlElement val copyright: String? = null,
-    @XmlSerialName("item", "", "") @XmlElement val item: List<Item>,
-    @XmlSerialName("image", "", "") val image: Image? = null,
+    @XmlSerialName("item", "", "") @XmlElement val item: List<ArticleItem>,
+    @XmlSerialName("image", "", "") val image: FeedImage? = null,
 
 )
 
 @Serializable
-data class Image(
+data class FeedImage(
     @XmlElement val url: String?,
     @XmlElement val title: String?,
     @XmlElement val link: String?,
@@ -38,7 +38,7 @@ data class Image(
 )
 
 @Serializable
-data class Item(
+data class ArticleItem(
     @XmlElement val title: String?,
     @XmlElement val pubDate: String?,
     @XmlElement val link: String?,
@@ -53,10 +53,10 @@ data class Item(
         "enclosure",
         "http://search.yahoo.com/mrss/",
         "media"
-    ) @XmlElement val mediaContent: MediaContent? = null
+    ) @XmlElement val mediaContent: ArticleMedia? = null
 )
 
-fun Item.getImageUrl(): String? {
+fun ArticleItem.extractImage(): String? {
     return mediaContent?.url ?: contentEncoded?.let { content ->
         val imgRegex = "<img[^>]+src=\"([^\"]+)\"".toRegex()
         return imgRegex.find(content)?.groupValues?.get(1)
@@ -64,7 +64,7 @@ fun Item.getImageUrl(): String? {
 }
 
 @Serializable
-data class MediaContent(
+data class ArticleMedia(
     @XmlElement val type: String? = null,
     @XmlElement val url: String? = null,
     @XmlElement val height: String? = null,
@@ -78,24 +78,24 @@ data class MediaContent(
         "description",
         "http://search.yahoo.com/mrss/",
         "media"
-    ) val mediaDescription: MediaDescription? = null,
+    ) val mediaDescription: MediaDesc? = null,
     @XmlSerialName(
         "credit",
         "http://search.yahoo.com/mrss/",
         "media"
-    ) val mediaCredit: MediaCredit? = null
+    ) val mediaCredit: MediaCreditInfo? = null
 )
 
 @Serializable
 @XmlSerialName("description", "http://search.yahoo.com/mrss/", "media")
-data class MediaDescription(
+data class MediaDesc(
     val type: String? = null,
     @XmlValue val value: String = ""
 )
 
 @Serializable
 @XmlSerialName("credit", "http://search.yahoo.com/mrss/", "media")
-data class MediaCredit(
+data class MediaCreditInfo(
     val role: String? = null,
     val scheme: String? = null,
     @XmlValue val value: String = ""

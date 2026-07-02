@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.rajumark.newzero.Res
 import com.rajumark.newzero.all
-import com.rajumark.newzero.domain.RssFeed
+import com.rajumark.newzero.domain.ArticleFeed
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FeedIcon(
-    feed: RssFeed?,
+    feed: ArticleFeed?,
     isSelected: Boolean = false,
     onClick: (() -> Unit)? = null
 ) {
@@ -67,7 +67,7 @@ fun FeedIcon(
     }
 }
 
-private fun RssFeed.shortName(): String =
+private fun ArticleFeed.shortName(): String =
     channel?.title?.replace(" ", "")?.take(2)?.uppercase() ?: ""
 
 @Composable

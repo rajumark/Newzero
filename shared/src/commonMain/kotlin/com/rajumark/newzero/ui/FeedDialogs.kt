@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rajumark.newzero.Res
 import com.rajumark.newzero.add
-import com.rajumark.newzero.domain.RssFeed
+import com.rajumark.newzero.domain.ArticleFeed
 import com.rajumark.newzero.remove
 import com.rajumark.newzero.rss_feed_url
 import org.jetbrains.compose.resources.stringResource
@@ -62,7 +62,7 @@ fun AddFeedDialog(
 
 @Composable
 fun DeleteFeedDialog(
-    feed: RssFeed,
+    feed: ArticleFeed,
     onDelete: () -> Unit,
     onDismiss: () -> Unit
 ) = Dialog(
@@ -74,7 +74,7 @@ fun DeleteFeedDialog(
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
             .padding(16.dp)
     ) {
-        Text(text = feed.sourceUrl)
+        Text(text = feed.feedUrl)
         Spacer(modifier = Modifier.size(16.dp))
         Button(
             modifier = Modifier.align(Alignment.End),

@@ -14,19 +14,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rajumark.newzero.app.FeedAction
-import com.rajumark.newzero.app.FeedStore
-import com.rajumark.newzero.domain.RssFeed
+import com.rajumark.newzero.app.ArticleAction
+import com.rajumark.newzero.app.ArticleStore
+import com.rajumark.newzero.domain.ArticleFeed
 
 @Composable
-fun FeedList(store: FeedStore) {
+fun FeedList(store: ArticleStore) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        val state = store.observeState().collectAsState()
+        val state = store.stateFlow().collectAsState()
         val showAddDialog = remember { mutableStateOf(false) }
-        val feedForDelete = remember<MutableState<RssFeed?>> { mutableStateOf(null) }
-        FeedItemList(feeds = state.value.feeds) {
+        val feedForDelete = remember<MutableState<ArticleFeed?>> { mutableStateOf(null) }
+        FeedItemList(feeds = state.value.sources) {
             feedForDelete.value = it
         }
         FloatingActionButton(
@@ -46,7 +46,7 @@ fun FeedList(store: FeedStore) {
         if (showAddDialog.value) {
             AddFeedDialog(
                 onAdd = {
-                    store.dispatch(FeedAction.Add(it))
+                    store.dispatch(ArticleAction.Add(it))
                     showAddDialog.value = false
                 },
                 onDismiss = {
@@ -58,7 +58,7 @@ fun FeedList(store: FeedStore) {
             DeleteFeedDialog(
                 feed = feed,
                 onDelete = {
-                    store.dispatch(FeedAction.Delete(feed.sourceUrl))
+                    store.dispatch(ArticleAction.Delete(feed.feedUrl))
                     feedForDelete.value = null
                 },
                 onDismiss = {
@@ -71,8 +71,8 @@ fun FeedList(store: FeedStore) {
 
 @Composable
 fun FeedItemList(
-    feeds: List<RssFeed>,
-    onClick: (RssFeed) -> Unit
+    feeds: List<ArticleFeed>,
+    onClick: (ArticleFeed) -> Unit
 ) {
     LazyColumn {
         itemsIndexed(feeds) { i, feed ->
@@ -84,12 +84,12 @@ fun FeedItemList(
 
 @Composable
 fun FeedItem(
-    feed: RssFeed,
+    feed: ArticleFeed,
     onClick: () -> Unit
 ) {
     Row(
         Modifier
-            .clickable(onClick = onClick, enabled = !feed.isDefault)
+            .clickable(onClick = onClick, enabled = !feed.isPreloaded)
             .padding(16.dp)
     ) {
         FeedIcon(feed = feed)

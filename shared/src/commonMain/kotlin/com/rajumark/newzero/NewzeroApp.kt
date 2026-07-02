@@ -23,8 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.rajumark.newzero.app.FeedSideEffect
-import com.rajumark.newzero.app.FeedStore
+import com.rajumark.newzero.app.ArticleEffect
+import com.rajumark.newzero.app.ArticleStore
 import com.rajumark.newzero.ui.AppTheme
 import com.rajumark.newzero.ui.FeedListScreen
 import com.rajumark.newzero.ui.MainScreen
@@ -84,9 +84,9 @@ fun RssReaderApp(navController: NavHostController = rememberNavController()) {
                 }
             }
 
-            val store: FeedStore = koinInject<FeedStore>()
-            val error = store.observeSideEffect()
-                .filterIsInstance<FeedSideEffect.Error>()
+            val store: ArticleStore = koinInject<ArticleStore>()
+            val error = store.effectFlow()
+                .filterIsInstance<ArticleEffect.Error>()
                 .collectAsState(null)
             LaunchedEffect(error.value) {
                 error.value?.let {

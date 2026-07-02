@@ -1,7 +1,7 @@
 //
 
 import SwiftUI
-import RssReader
+import Newzero
 import URLImage
 import Foundation
 

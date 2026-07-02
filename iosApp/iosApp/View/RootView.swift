@@ -1,8 +1,8 @@
 import SwiftUI
-import RssReader
+import Newzero
 
 struct RootView: View {
-    @EnvironmentObject var store: ObservableFeedStore
+    @EnvironmentObject var store: ObservableArticleStore
     @SwiftUI.State var errorMessage: String?
     
     var body: some View {
@@ -26,7 +26,7 @@ struct RootView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onReceive(store.$sideEffect) { value in
-            if let errorMessage = (value as? FeedSideEffect.Error)?.error.message {
+            if let errorMessage = (value as? ArticleEffect.Error)?.error.message {
                 withAnimation { self.errorMessage = errorMessage }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     withAnimation { self.errorMessage = nil }

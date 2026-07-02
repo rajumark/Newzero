@@ -1,5 +1,5 @@
 import SwiftUI
-import RssReader
+import Newzero
 import URLImage
 
 struct MainFeedView: ConnectedView {
@@ -31,7 +31,7 @@ struct MainFeedView: ConnectedView {
         }
     }
     
-    func map(state: FeedState, dispatch: @escaping DispatchFunction) -> Props {
+    func map(state: ArticleState, dispatch: @escaping DispatchFunction) -> Props {
         let selectedFeedOption: FeedPickerOption
         if let selectedFeed = state.selectedFeed {
             selectedFeedOption = .feed(selectedFeed)
@@ -40,13 +40,13 @@ struct MainFeedView: ConnectedView {
         }
         return Props(loading: state.progress,
               items: state.mainFeedPosts(),
-              feedOptions: [.all] + state.feeds.map { FeedPickerOption.feed($0)},
+              feedOptions: [.all] + state.sources.map { FeedPickerOption.feed($0)},
               selectedFeedOption: selectedFeedOption,
               onReloadFeed: { reload in
-                dispatch(FeedAction.Refresh(forceLoad: reload))
+                dispatch(ArticleAction.Refresh(forceReload: reload))
               },
               onSelectFeed: { feed in
-                dispatch(FeedAction.SelectFeed(feed: feed))
+                dispatch(ArticleAction.SelectFeed(feed: feed))
               })
     }
     

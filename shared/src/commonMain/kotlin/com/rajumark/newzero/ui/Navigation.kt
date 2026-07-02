@@ -16,8 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rajumark.newzero.Res
-import com.rajumark.newzero.app.FeedAction
-import com.rajumark.newzero.app.FeedStore
+import com.rajumark.newzero.app.ArticleAction
+import com.rajumark.newzero.app.ArticleStore
 import com.rajumark.newzero.app_name
 import com.rajumark.newzero.back_button
 import com.rajumark.newzero.feed_list
@@ -63,15 +63,15 @@ fun MainScreen(
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val store: FeedStore = koinInject<FeedStore>()
-    val state by store.observeState().collectAsStateWithLifecycle()
+    val store: ArticleStore = koinInject<ArticleStore>()
+    val state by store.stateFlow().collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
     LaunchedEffect(Unit) {
-        store.dispatch(FeedAction.Refresh(false))
+        store.dispatch(ArticleAction.Refresh(false))
     }
     PullToRefreshBox(
         isRefreshing = state.progress,
-        onRefresh = { store.dispatch(FeedAction.Refresh(true)) },
+        onRefresh = { store.dispatch(ArticleAction.Refresh(true)) },
         modifier = modifier,
         content = {
             MainFeed(
@@ -88,6 +88,6 @@ fun MainScreen(
 
 @Composable
 fun FeedListScreen() {
-    val store: FeedStore = koinInject<FeedStore>()
+    val store: ArticleStore = koinInject<ArticleStore>()
     FeedList(store = store)
 }

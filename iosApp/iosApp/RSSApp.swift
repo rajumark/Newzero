@@ -2,18 +2,18 @@
 
 import Foundation
 import SwiftUI
-import RssReader
+import Newzero
 
 @main
 struct RSSApp: App {
-    let rss: RssReader
-    let store: ObservableFeedStore
+    let rss: FeedManager
+    let store: ObservableArticleStore
     
     init() {
-        KoinHelperKt.doInitKoin()
-        let helper = KoinHelper()
+        DIHelperKt.doInitKoin()
+        let helper = DIHelper()
         rss = helper.rssReader
-        store = ObservableFeedStore(store: helper.feedStore)
+        store = ObservableArticleStore(store: helper.articleStore)
     }
   
     var body: some Scene {
@@ -23,16 +23,16 @@ struct RSSApp: App {
     }
 }
 
-class ObservableFeedStore: ObservableObject {
-    @Published public var state: FeedState =  FeedState(progress: false, feeds: [], selectedFeed: nil)
-    @Published public var sideEffect: FeedSideEffect?
+class ObservableArticleStore: ObservableObject {
+    @Published public var state: ArticleState =  ArticleState(progress: false, sources: [], selectedFeed: nil)
+    @Published public var sideEffect: ArticleEffect?
     
-    let store: FeedStore
+    let store: ArticleStore
     
     var stateWatcher : Closeable?
     var sideEffectWatcher : Closeable?
 
-    init(store: FeedStore) {
+    init(store: ArticleStore) {
         self.store = store
         stateWatcher = self.store.watchState().watch { [weak self] state in
             self?.state = state
@@ -42,7 +42,7 @@ class ObservableFeedStore: ObservableObject {
         }
     }
     
-    public func dispatch(_ action: FeedAction) {
+    public func dispatch(_ action: ArticleAction) {
         store.dispatch(action: action)
     }
     
@@ -52,18 +52,18 @@ class ObservableFeedStore: ObservableObject {
     }
 }
 
-public typealias DispatchFunction = (FeedAction) -> ()
+public typealias DispatchFunction = (ArticleAction) -> ()
 
 public protocol ConnectedView: View {
     associatedtype Props
     associatedtype V: View
     
-    func map(state: FeedState, dispatch: @escaping DispatchFunction) -> Props
+    func map(state: ArticleState, dispatch: @escaping DispatchFunction) -> Props
     func body(props: Props) -> V
 }
 
 public extension ConnectedView {
-    func render(state: FeedState, dispatch: @escaping DispatchFunction) -> V {
+    func render(state: ArticleState, dispatch: @escaping DispatchFunction) -> V {
         let props = map(state: state, dispatch: dispatch)
         return body(props: props)
     }
@@ -74,11 +74,10 @@ public extension ConnectedView {
 }
 
 public struct StoreConnector<V: View>: View {
-    @EnvironmentObject var store: ObservableFeedStore
-    let content: (FeedState, @escaping DispatchFunction) -> V
+    @EnvironmentObject var store: ObservableArticleStore
+    let content: (ArticleState, @escaping DispatchFunction) -> V
     
     public var body: V {
         return content(store.state, store.dispatch)
     }
 }
-

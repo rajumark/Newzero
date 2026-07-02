@@ -2,11 +2,11 @@ package com.rajumark.newzero
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.rajumark.newzero.app.FeedStore
+import com.rajumark.newzero.app.ArticleStore
 import com.rajumark.newzero.core.HttpClient
-import com.rajumark.newzero.core.RssReader
-import com.rajumark.newzero.datasource.network.FeedLoader
-import com.rajumark.newzero.datasource.storage.FeedStorage
+import com.rajumark.newzero.core.FeedManager
+import com.rajumark.newzero.datasource.network.RssService
+import com.rajumark.newzero.datasource.storage.FeedCache
 import com.russhwolf.settings.PropertiesSettings
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
@@ -14,9 +14,9 @@ import org.koin.dsl.module
 import java.util.*
 
 private val appModule = module {
-single { RssReader(get(), get(), Settings(setOf("https://example.com/feed.xml"))) }
-    single&lt;FeedStorage&gt; {
-        FeedStorage(
+single { FeedManager(get(), get(), AppSettings(setOf("https://example.com/feed.xml"))) }
+    single<FeedCache> {
+        FeedCache(
             PropertiesSettings(Properties()),
             Json {
                 ignoreUnknownKeys = true
@@ -25,8 +25,8 @@ single { RssReader(get(), get(), Settings(setOf("https://example.com/feed.xml"))
             }
         )
     }
-    single { FeedStore(get()) }
-    single { FeedLoader(get()) }
+    single { ArticleStore(get()) }
+    single { RssService(get()) }
     single { HttpClient(false) }
 }
 

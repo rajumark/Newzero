@@ -1,18 +1,18 @@
 package com.rajumark.newzero.core
 
 import android.content.Context
-import com.rajumark.newzero.datasource.network.FeedLoader
-import com.rajumark.newzero.datasource.storage.FeedStorage
+import com.rajumark.newzero.datasource.network.RssService
+import com.rajumark.newzero.datasource.storage.FeedCache
 import com.russhwolf.settings.SharedPreferencesSettings
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 
-fun buildRssReader(ctx: Context, withLog: Boolean) = RssReader(
-    FeedLoader(
+fun buildFeedManager(ctx: Context, withLog: Boolean) = FeedManager(
+    RssService(
         HttpClient(withLog)
     ),
-    FeedStorage(
+    FeedCache(
         SharedPreferencesSettings(
             ctx.getSharedPreferences(
                 "rss_reader_pref",

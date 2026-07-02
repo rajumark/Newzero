@@ -27,7 +27,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "RssReader"
+            baseName = "Newzero"
             isStatic = true
         }
     }

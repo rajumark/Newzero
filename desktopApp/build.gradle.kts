@@ -1,4 +1,11 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -7,6 +14,9 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+    }
     dependencies {
         implementation(projects.shared)
         implementation(compose.desktop.currentOs)

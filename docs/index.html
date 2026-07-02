@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Newzero — Cross-platform RSS/Atom feed reader built with Kotlin Multiplatform and Compose Multiplatform. Android, iOS, and Desktop from one shared codebase.">
+  <title>Newzero</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a2e;
+      --muted: #6b7280;
+      --accent: #5a6577;
+      --accent-hover: #3d4654;
+      --card: #f8f9fb;
+      --border: #e5e7eb;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1c1e;
+        --fg: #e1e1e6;
+        --muted: #9ca3af;
+        --accent: #8a95a5;
+        --accent-hover: #a5aebd;
+        --card: #232427;
+        --border: #2d2f33;
+      }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--fg);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      font-size: 0.875rem;
+    }
+
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--fg); }
+
+    section { padding: 80px 0; }
+    section:first-of-type { padding-top: 100px; }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 32px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 0.925rem;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); color: #fff; }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .arch-diagram {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+
+    .arch-diagram pre {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: var(--muted);
+    }
+
+    .arch-diagram .highlight {
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px 0;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    td:last-child { color: var(--muted); }
+
+    .platform-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .platform-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .platform-card .platform-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .platform-card .platform-status {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .platform-card .platform-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .screenshots {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .screenshots figure {
+      margin: 0;
+      text-align: center;
+    }
+
+    .screenshots img {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      max-width: 320px;
+      height: auto;
+    }
+
+    .screenshots figcaption {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 1.75rem; }
+      section { padding: 60px 0; }
+      section:first-of-type { padding-top: 60px; }
+      nav { flex-direction: column; gap: 12px; }
+      .arch-diagram pre { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="logo">Newzero</div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#tech-stack">Stack</a></li>
+        <li><a href="#platforms">Platforms</a></li>
+        <li><a href="https://github.com/rajumark/newzero">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <section>
+    <div class="container">
+      <h1>Newzero</h1>
+      <p>Cross-platform RSS/Atom feed reader built with Kotlin Multiplatform &amp; Compose Multiplatform. One shared codebase, three platforms.</p>
+      <div class="tags">
+        <span class="tag">Kotlin Multiplatform</span>
+        <span class="tag">Compose Multiplatform</span>
+        <span class="tag">RSS / Atom</span>
+        <span class="tag">Android</span>
+        <span class="tag">iOS</span>
+        <span class="tag">Desktop</span>
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="https://github.com/rajumark/newzero" class="btn btn-primary">View on GitHub</a>
+        <a href="https://github.com/rajumark/newzero/releases" class="btn btn-outline">Download APK</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <section id="features">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>RSS 2.0 &amp; Atom</h3>
+          <p>Parses both feed formats using Ktor XML content negotiation with <code>kotlinx.serialization</code>. Automatic format detection.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Offline-First</h3>
+          <p>Two-tier cache (in-memory + disk) keeps articles available offline. JSON-persisted via <code>multiplatform-settings</code>.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Material Design 3</h3>
+          <p>Custom Slate color palette with automatic light/dark mode. System-following, manual-light, and manual-dark modes.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Pull-to-Refresh</h3>
+          <p>Material Design 3 styled pull-to-refresh with forced re-fetch. Background sync on Android via WorkManager.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Image Rich</h3>
+          <p>Article thumbnails and feed favicons rendered with Coil 3 (Kotlin Multiplatform image loading library).</p>
+        </div>
+        <div class="feature-card">
+          <h3>Clean Architecture</h3>
+          <p>Custom Redux-like <code>NanoStore</code> pattern with unidirectional data flow. Sealed Action/Effect classes.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Error Dialogs</h3>
+          <p>Network and parse errors shown in a clean dialog with one-tap clipboard copy for debugging.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Koin DI</h3>
+          <p>Lightweight dependency injection. Platform-specific modules for Android, iOS, and Desktop with shared common layer.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Open Source</h3>
+          <p>MIT licensed. No subscriptions, no ads, no tracking. Free forever.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <h2>Architecture</h2>
+      <div class="arch-diagram">
+<pre>
+  ┌─────────────────────────────────────────────────────────────┐
+  │                 Compose Multiplatform UI                    │
+  │  ┌──────────┐  ┌────────────┐  ┌─────────┐  ┌───────────┐  │
+  │  │ PostList │  │ FeedList   │  │Settings │  │ Error     │  │
+  │  │(Articles)│  │(Manage     │  │(Theme   │  │ Dialog    │  │
+  │  │          │  │ Feeds)     │  │ Toggle) │  │           │  │
+  │  └────┬─────┘  └────┬───────┘  └────┬────┘  └─────┬─────┘  │
+  │       └─────────────┴───────────────┴──────────────┘        │
+  │                         │                                   │
+  │              ┌──────────▼───────────┐                       │
+  │              │    ArticleStore      │  State / Action /     │
+  │              │  (NanoStore impl)    │  Effect pattern       │
+  │              └──────────┬───────────┘                       │
+  └─────────────────────────┼───────────────────────────────────┘
+                            │
+              ┌─────────────┼──────────────┐
+              ▼             ▼              ▼
+       ┌────────────┐ ┌───────────┐ ┌──────────────┐
+       │ FeedManager│ │ FeedCache │ │ RssService   │
+       │   Business │ │  Persist  │ │  Ktor HTTP   │
+       │   Logic    │ │           │ │  + XML Parse │
+       └──────┬─────┘ └───────────┘ └──────┬───────┘
+              │                            │
+              ▼                            ▼
+       ┌───────────┐              ┌────────────────┐
+       │multiplatf │              │  RSS / Atom    │
+       │orm-settngs│              │  XML Endpoint  │
+       │(Key-Value)│              │                │
+       └───────────┘              └────────────────┘
+
+  <span class="highlight">Data flow is unidirectional:</span>
+  User Input → dispatch(Action) → Store.process() → async side-effect → new State → UI recompose
+</pre>
+      </div>
+    </section>
+
+    <section id="project-structure">
+      <h2>Project Structure</h2>
+      <div class="arch-diagram">
+<pre>
+  Newzero/
+  ├── <span class="highlight">shared/</span>                    # KMP shared module
+  │   └── src/commonMain/kotlin/
+  │       └── com/rajumark/newzero/
+  │           ├── <span class="highlight">app/</span>              # Redux state management
+  │           │   ├── ArticleStore.kt  # Action dispatch + async ops
+  │           │   └── ReduxCore.kt     # NanoStore interface
+  │           ├── <span class="highlight">core/</span>             # Business logic
+  │           │   ├── FeedManager.kt   # Add/Remove/Load feeds
+  │           │   └── NetworkClient.kt # Ktor config + XML plugins
+  │           ├── <span class="highlight">datasource/</span>        # Data layer
+  │           │   ├── network/         # RssService (HTTP + parse)
+  │           │   └── storage/         # FeedCache (mem + disk)
+  │           ├── <span class="highlight">domain/</span>            # ArticleFeed, AtomFeed models
+  │           └── <span class="highlight">ui/</span>               # Compose shared UI
+  ├── <span class="highlight">androidApp/</span>                # Android (App + WorkManager)
+  ├── <span class="highlight">desktopApp/</span>                # Desktop JVM (macOS/Win/Linux)
+  └── <span class="highlight">iosApp/</span>                    # iOS Xcode wrapper
+</pre>
+      </div>
+    </section>
+
+    <section id="tech-stack">
+      <h2>Tech Stack</h2>
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Technology</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Language</td><td>Kotlin 2.3.21</td></tr>
+          <tr><td>UI Framework</td><td>Compose Multiplatform 1.11.0 + Material 3</td></tr>
+          <tr><td>Navigation</td><td>Jetpack Navigation Compose (Multiplatform)</td></tr>
+          <tr><td>Networking</td><td>Ktor 3.4.3 (OkHttp / Darwin engines)</td></tr>
+          <tr><td>XML Parsing</td><td>xmlutil 0.91.3 + ktor-serialization-kotlinx-xml</td></tr>
+          <tr><td>Image Loading</td><td>Coil 3.4.0</td></tr>
+          <tr><td>Dependency Injection</td><td>Koin 4.2.1</td></tr>
+          <tr><td>Persistence</td><td>multiplatform-settings 1.3.0</td></tr>
+          <tr><td>Serialization</td><td>kotlinx.serialization 1.11.0</td></tr>
+          <tr><td>Coroutines</td><td>kotlinx.coroutines 1.11.0</td></tr>
+          <tr><td>Logging</td><td>Napier 2.7.1</td></tr>
+          <tr><td>Background Sync</td><td>Android WorkManager 2.11.2</td></tr>
+          <tr><td>Build System</td><td>Gradle + AGP 9.0.1</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="dataflow">
+      <h2>Data Flow: Adding a Feed</h2>
+      <div class="arch-diagram">
+<pre>
+  User types URL → taps "Add"
+         │
+         ▼
+  dispatch(ArticleAction.Add(url))
+         │
+         ▼
+  ArticleStore.addSource(url)
+         │
+         ├─ FeedManager.addSource(url)
+         │     ├─ <span class="highlight">RssService.fetchByUrl(url)</span>
+         │     │     └─ Ktor HTTP GET
+         │     │            │
+         │     │            ├─ Content-Type: <span class="highlight">application/rss+xml</span>
+         │     │            │   └─ Deserialize as ArticleFeed (RSS 2.0)
+         │     │            │
+         │     │            ├─ Content-Type: <span class="highlight">application/atom+xml</span>
+         │     │            │   └─ Deserialize as AtomFeed → convert to ArticleFeed
+         │     │            │
+         │     │            └─ Content-Type: <span class="highlight">application/xml</span>
+         │     │                └─ Try RSS parser
+         │     │
+         │     └─ FeedCache.save(feed)
+         │           ├─ memCache[url] = feed   (instant)
+         │           └─ diskCache = memCache   (JSON → Settings)
+         │
+         ├─ dispatch(ArticleAction.Data(sources))
+         │
+         ▼
+  UI recomposes with new feed
+</pre>
+      </div>
+    </section>
+
+    <section id="platforms">
+      <h2>Platform Support</h2>
+      <div class="platform-cards">
+        <div class="platform-card">
+          <div class="platform-icon">&#x1F4F1;</div>
+          <div class="platform-name">Android</div>
+          <div class="platform-status">API 26+ (Android 8+) · Target SDK 36</div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">&#x1F4F1;</div>
+          <div class="platform-name">iOS</div>
+          <div class="platform-status">iOS 16+ via SwiftUI wrapper</div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">&#x1F5A5;</div>
+          <div class="platform-name">Desktop</div>
+          <div class="platform-status">macOS · Windows · Linux (Compose Desktop)</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenshots">
+      <h2>Screenshots</h2>
+      <div class="screenshots">
+        <figure>
+          <img src="../screenshots/screenshot_light.png" alt="Newzero in Light Mode">
+          <figcaption>Light Mode</figcaption>
+        </figure>
+        <figure>
+          <img src="../screenshots/screenshot_dark.png" alt="Newzero in Dark Mode">
+          <figcaption>Dark Mode</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick Start</h2>
+      <div class="arch-diagram">
+<pre>
+  <span class="highlight"># Build shared module (JVM)</span>
+  ./gradlew :shared:compileKotlinJvm
+
+  <span class="highlight"># Install on Android emulator/device</span>
+  ./gradlew :androidApp:installDebug
+
+  <span class="highlight"># Run Desktop app</span>
+  ./gradlew :desktopApp:run
+
+  <span class="highlight"># Build iOS framework (macOS only)</span>
+  ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+  # Open iosApp/iosApp.xcodeproj in Xcode → run
+</pre>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>Built with Kotlin, Compose Multiplatform &amp; Ktor</p>
+      <p style="margin-top:6px"><a href="https://github.com/rajumark/newzero">GitHub</a> &middot; MIT License</p>
+    </div>
+  </footer>
+</body>
+</html>

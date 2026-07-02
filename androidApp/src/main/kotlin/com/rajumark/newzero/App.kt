@@ -24,7 +24,7 @@ class App : Application() {
     }
 
     private val appModule = module {
-        single { FeedManager(get(), get(), AppSettings(setOf("https://example.com/feed.xml"))) }
+        single { FeedManager(get(), get(), AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/"))) }
         single {
             FeedCache(
                 Settings(),

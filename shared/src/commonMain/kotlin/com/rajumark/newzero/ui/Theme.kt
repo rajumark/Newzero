@@ -8,6 +8,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+
 private val Slate = Color(0xFF5A6577)
 private val SlateLight = Color(0xFFE8EBF0)
 private val White = Color(0xFFFFFFFF)
@@ -46,12 +47,20 @@ private val DarkColors = darkColorScheme(
     onPrimaryContainer = White
 )
 
+enum class ThemeMode { AUTO, LIGHT, DARK }
+
 @Composable
 fun AppTheme(
+    themeMode: ThemeMode = ThemeMode.AUTO,
     content: @Composable () -> Unit
 ) {
+    val useDark = when (themeMode) {
+        ThemeMode.AUTO -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) DarkColors else LightColors,
+        colorScheme = if (useDark) DarkColors else LightColors,
         content = {
             Surface(content = content)
         }

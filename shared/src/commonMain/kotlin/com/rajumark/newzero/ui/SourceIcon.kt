@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +43,7 @@ fun FeedIcon(
             .clip(CircleShape)
             .border(1.5.dp, borderColor, CircleShape)
             .background(
-                color = MaterialTheme.colorScheme.surfaceVariant
+                color = MaterialTheme.colorScheme.surface
             )
             .clickable(enabled = onClick != null, onClick = onClick ?: {})
     ) {
@@ -75,12 +75,13 @@ fun EditIcon(
         modifier = Modifier
             .size(38.dp)
             .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface)
             .border(1.5.dp, MaterialTheme.colorScheme.outline, CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Image(
-            imageVector = Icons.Default.Edit,
+            imageVector = Icons.Default.Add,
             contentDescription = null
         )
     }

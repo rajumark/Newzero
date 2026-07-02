@@ -11,7 +11,7 @@ import kotlinx.coroutines.coroutineScope
 class FeedManager(
     private val feedLoader: RssService,
     private val feedStorage: FeedCache,
-    private val settings: AppSettings = AppSettings(setOf("https://example.com/feed.xml"))
+    private val settings: AppSettings = AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/"))
 ) {
 
     @Throws(Exception::class)

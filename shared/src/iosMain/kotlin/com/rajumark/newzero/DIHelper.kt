@@ -14,7 +14,7 @@ import org.koin.dsl.module
 import platform.Foundation.NSUserDefaults
 
 private val appModule = module {
-    single { FeedManager(get(), get(), AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/"))) }
+    single { FeedManager(get(), get(), AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/", "https://androidweekly.net/rss.xml"))) }
     single<FeedCache> {
         FeedCache(
             NSUserDefaultsSettings(NSUserDefaults.standardUserDefaults()),

@@ -14,7 +14,7 @@ import org.koin.dsl.module
 import java.util.*
 
 private val appModule = module {
-single { FeedManager(get(), get(), AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/"))) }
+single { FeedManager(get(), get(), AppSettings(setOf("https://blog.jetbrains.com/kotlin/feed/", "https://androidweekly.net/rss.xml"))) }
     single<FeedCache> {
         FeedCache(
             PropertiesSettings(Properties()),

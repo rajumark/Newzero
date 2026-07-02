@@ -100,3 +100,58 @@ data class MediaCreditInfo(
     val scheme: String? = null,
     @XmlValue val value: String = ""
 )
+
+@Serializable
+@XmlSerialName("feed", "http://www.w3.org/2005/Atom", "")
+data class AtomFeed(
+    @XmlElement val title: String?,
+    @XmlElement val subtitle: String? = null,
+    @XmlElement val link: List<AtomLink>? = null,
+    @XmlElement val updated: String? = null,
+    @XmlSerialName("entry", "http://www.w3.org/2005/Atom", "") @XmlElement val entries: List<AtomEntry> = emptyList()
+)
+
+@Serializable
+@XmlSerialName("link", "http://www.w3.org/2005/Atom", "")
+data class AtomLink(
+    val href: String?,
+    val rel: String? = null,
+    val type: String? = null
+)
+
+@Serializable
+@XmlSerialName("entry", "http://www.w3.org/2005/Atom", "")
+data class AtomEntry(
+    @XmlElement val id: String?,
+    @XmlElement val title: String?,
+    @XmlElement val published: String?,
+    @XmlElement val updated: String? = null,
+    @XmlElement val content: AtomContent? = null,
+    @XmlElement val summary: String? = null,
+    @XmlElement val link: List<AtomLink>? = null,
+    @XmlElement val author: List<AtomAuthor>? = null,
+    @XmlSerialName("thumbnail", "http://search.yahoo.com/mrss/", "media") val mediaThumbnail: AtomMediaThumbnail? = null
+)
+
+@Serializable
+@XmlSerialName("content", "http://www.w3.org/2005/Atom", "")
+data class AtomContent(
+    val type: String? = null,
+    @XmlValue val value: String = ""
+)
+
+@Serializable
+@XmlSerialName("author", "http://www.w3.org/2005/Atom", "")
+data class AtomAuthor(
+    @XmlElement val name: String?,
+    @XmlElement val uri: String? = null,
+    @XmlElement val email: String? = null
+)
+
+@Serializable
+@XmlSerialName("thumbnail", "http://search.yahoo.com/mrss/", "media")
+data class AtomMediaThumbnail(
+    val url: String? = null,
+    val height: String? = null,
+    val width: String? = null
+)

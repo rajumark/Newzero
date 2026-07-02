@@ -29,5 +29,20 @@ fun HttpClient(withLog: Boolean) = HttpClient() {
                 unknownChildHandler = XmlConfig.IGNORING_UNKNOWN_CHILD_HANDLER
             }
         })
+        xml(contentType = ContentType.Application.Xml, format = XML {
+            defaultPolicy {
+                unknownChildHandler = XmlConfig.IGNORING_UNKNOWN_CHILD_HANDLER
+            }
+        })
+        xml(contentType = ContentType.Text.Xml, format = XML {
+            defaultPolicy {
+                unknownChildHandler = XmlConfig.IGNORING_UNKNOWN_CHILD_HANDLER
+            }
+        })
+        xml(contentType = ContentType("application", "atom+xml"), format = XML {
+            defaultPolicy {
+                unknownChildHandler = XmlConfig.IGNORING_UNKNOWN_CHILD_HANDLER
+            }
+        })
     }
 }

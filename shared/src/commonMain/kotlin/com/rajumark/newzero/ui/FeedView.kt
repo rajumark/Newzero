@@ -1,16 +1,17 @@
 package com.rajumark.newzero.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -35,38 +36,27 @@ fun MainFeed(
             .sortedByDescending { it.pubDate }
     }
     Column {
-        val coroutineScope = rememberCoroutineScope()
+        FeedBar(
+            feeds = state.value.sources,
+            selectedFeed = state.value.selectedFeed,
+            onFeedClick = { store.dispatch(ArticleAction.SelectFeed(it)) },
+            onEditClick = onEditClick
+        )
         val listState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
         PostList(
             modifier = Modifier.weight(1f),
             posts = posts,
             listState = listState
-        ) { post -> onPostClick(post) }
-        MainFeedBottomBar(
-            feeds = state.value.sources,
-            selectedFeed = state.value.selectedFeed,
-            onFeedClick = { feed ->
-                coroutineScope.launch { listState.scrollToItem(0) }
-                store.dispatch(ArticleAction.SelectFeed(feed))
-            },
-            onEditClick = onEditClick
-        )
-        Spacer(
-            Modifier
-                .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                .fillMaxWidth()
-        )
+        ) { post ->
+            coroutineScope.launch { listState.scrollToItem(0) }
+            onPostClick(post)
+        }
     }
 }
 
-private sealed class Icons {
-    object All : Icons()
-    class FeedIcon(val feed: ArticleFeed) : Icons()
-    object Edit : Icons()
-}
-
 @Composable
-fun MainFeedBottomBar(
+fun FeedBar(
     feeds: List<ArticleFeed>,
     selectedFeed: ArticleFeed?,
     onFeedClick: (ArticleFeed?) -> Unit,
@@ -78,8 +68,10 @@ fun MainFeedBottomBar(
         add(Icons.Edit)
     }
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        contentPadding = PaddingValues(horizontal = 4.dp)
     ) {
         this.items(items) { item ->
             when (item) {
@@ -88,16 +80,20 @@ fun MainFeedBottomBar(
                     isSelected = selectedFeed == null,
                     onClick = { onFeedClick(null) }
                 )
-
                 is Icons.FeedIcon -> FeedIcon(
                     feed = item.feed,
                     isSelected = selectedFeed == item.feed,
                     onClick = { onFeedClick(item.feed) }
                 )
-
                 is Icons.Edit -> EditIcon(onClick = onEditClick)
             }
-            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(10.dp))
         }
     }
+}
+
+private sealed class Icons {
+    object All : Icons()
+    class FeedIcon(val feed: ArticleFeed) : Icons()
+    object Edit : Icons()
 }

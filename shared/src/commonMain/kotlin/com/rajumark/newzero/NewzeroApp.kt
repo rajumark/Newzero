@@ -1,12 +1,8 @@
 package com.rajumark.newzero
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -17,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,9 +32,7 @@ import org.koin.compose.koinInject
 @Composable
 fun RssReaderApp(navController: NavHostController = rememberNavController()) {
     AppTheme {
-        // Get current back stack entry
         val backStackEntry by navController.currentBackStackEntryAsState()
-        // Get the name of the current screen
         val currentScreen = Screen.valueOf(
             backStackEntry?.destination?.route ?: Screen.Main.name
         )
@@ -54,45 +47,35 @@ fun RssReaderApp(navController: NavHostController = rememberNavController()) {
                     navigateUp = { navController.navigateUp() }
                 )
             },
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.padding(
-                        WindowInsets.systemBars
-                            .only(WindowInsetsSides.Bottom)
-                            .asPaddingValues()
-                    ), hostState = snackbarHostState
-                )
-            }
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = Screen.Main.name,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                composable(route = Screen.Main.name) {
-                    MainScreen(
-                        onEditClick = { navController.navigate(Screen.FeedList.name) },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    )
+            Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Main.name,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composable(route = Screen.Main.name) {
+                        MainScreen(
+                            onEditClick = { navController.navigate(Screen.FeedList.name) },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    composable(route = Screen.FeedList.name) {
+                        FeedListScreen()
+                    }
                 }
-                composable(route = Screen.FeedList.name) {
-                    FeedListScreen()
-                }
-            }
 
-            val store: ArticleStore = koinInject<ArticleStore>()
-            val error = store.effectFlow()
-                .filterIsInstance<ArticleEffect.Error>()
-                .collectAsState(null)
-            LaunchedEffect(error.value) {
-                error.value?.let {
-                    snackbarHostState.showSnackbar(
-                        it.error.message.toString()
-                    )
+                val store: ArticleStore = koinInject<ArticleStore>()
+                val error = store.effectFlow()
+                    .filterIsInstance<ArticleEffect.Error>()
+                    .collectAsState(null)
+                LaunchedEffect(error.value) {
+                    error.value?.let {
+                        snackbarHostState.showSnackbar(
+                            it.error.message.toString()
+                        )
+                    }
                 }
             }
         }

@@ -1,18 +1,30 @@
 package com.rajumark.newzero.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rajumark.newzero.app.ArticleAction
 import com.rajumark.newzero.app.ArticleStore
@@ -20,38 +32,29 @@ import com.rajumark.newzero.domain.ArticleFeed
 
 @Composable
 fun FeedList(store: ArticleStore) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         val state = store.stateFlow().collectAsState()
         val showAddDialog = remember { mutableStateOf(false) }
         val feedForDelete = remember<MutableState<ArticleFeed?>> { mutableStateOf(null) }
         FeedItemList(feeds = state.value.sources) {
             feedForDelete.value = it
         }
-        FloatingActionButton(
+        Image(
+            imageVector = Icons.Default.Add,
+            contentDescription = null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .navigationBarsPadding()
-                .imePadding(),
-            onClick = { showAddDialog.value = true }
-        ) {
-            Image(
-                imageVector = Icons.Default.Add,
-                modifier = Modifier.align(Alignment.Center),
-                contentDescription = null
-            )
-        }
+                .size(24.dp)
+                .clickable { showAddDialog.value = true }
+        )
         if (showAddDialog.value) {
             AddFeedDialog(
                 onAdd = {
                     store.dispatch(ArticleAction.Add(it))
                     showAddDialog.value = false
                 },
-                onDismiss = {
-                    showAddDialog.value = false
-                }
+                onDismiss = { showAddDialog.value = false }
             )
         }
         feedForDelete.value?.let { feed ->
@@ -61,9 +64,7 @@ fun FeedList(store: ArticleStore) {
                     store.dispatch(ArticleAction.Delete(feed.feedUrl))
                     feedForDelete.value = null
                 },
-                onDismiss = {
-                    feedForDelete.value = null
-                }
+                onDismiss = { feedForDelete.value = null }
             )
         }
     }
@@ -74,9 +75,8 @@ fun FeedItemList(
     feeds: List<ArticleFeed>,
     onClick: (ArticleFeed) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp)) {
         itemsIndexed(feeds) { i, feed ->
-            if (i == 0) Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
             FeedItem(feed) { onClick(feed) }
         }
     }
@@ -88,23 +88,36 @@ fun FeedItem(
     onClick: () -> Unit
 ) {
     Row(
-        Modifier
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .border(
+                0.5.dp,
+                MaterialTheme.colorScheme.outline,
+                RoundedCornerShape(10.dp)
+            )
             .clickable(onClick = onClick, enabled = !feed.isPreloaded)
-            .padding(16.dp)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         FeedIcon(feed = feed)
-        Spacer(modifier = Modifier.size(16.dp))
-        Column {
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
             feed.channel?.title?.let { title ->
                 Text(
                     style = MaterialTheme.typography.bodyMedium,
-                    text = title
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             feed.channel?.description?.let { description ->
                 Text(
                     style = MaterialTheme.typography.bodySmall,
-                    text = description
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = description,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

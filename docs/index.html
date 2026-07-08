@@ -11,8 +11,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    :root,
-    [data-theme="light"] {
+    :root {
       --bg: #f8f9fc;
       --bg-alt: #ffffff;
       --fg: #0f172a;
@@ -46,21 +45,6 @@
         --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
         --nav-blur: rgba(8, 11, 22, 0.85);
       }
-    }
-
-    [data-theme="dark"] {
-      --bg: #080b16;
-      --bg-alt: #0f1322;
-      --fg: #f1f5f9;
-      --fg-muted: #94a3b8;
-      --border: #1e293b;
-      --accent-1: #818cf8;
-      --accent-2: #a78bfa;
-      --accent-glow: rgba(129, 140, 248, 0.12);
-      --card-bg: #0f1322;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
-      --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
-      --nav-blur: rgba(8, 11, 22, 0.85);
     }
 
     html { scroll-behavior: smooth; }
@@ -296,28 +280,29 @@
     .dot.desktop { background: var(--accent-1); }
 
     .hero-right {
-      position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 20px;
       min-height: 520px;
     }
 
     .shot-stack {
-      position: relative;
-      width: 100%;
-      max-width: 460px;
-      height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
     }
 
     .shot-card {
-      position: absolute;
       border-radius: 16px;
       border: 1px solid var(--border);
       overflow: hidden;
       background: var(--card-bg);
       box-shadow: 0 20px 50px rgba(0,0,0,0.18);
-      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s;
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s;
+      position: relative;
     }
 
     .shot-card img {
@@ -344,28 +329,11 @@
       white-space: nowrap;
     }
 
-    /* Desktop screenshot — large, centered */
-    .shot-card.desktop {
-      width: 380px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
+    .shot-card.desktop { width: 380px; }
+    .shot-card.android { width: 200px; }
+    .shot-card.iphone { width: 180px; }
 
-    /* Mobile — smaller, overlapping bottom-left */
-    .shot-card.mobile {
-      width: 180px;
-      z-index: 3;
-      position: absolute;
-      bottom: 0;
-      left: -10px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.20);
-    }
-
-    .shot-card.desktop:hover { transform: translate(-50%, -50%) translateY(-6px); filter: brightness(1.05); }
-    .shot-card.mobile:hover { transform: translateY(-6px); filter: brightness(1.05); }
-    .shot-card:hover { box-shadow: 0 28px 64px rgba(0,0,0,0.28); }
+    .shot-card:hover { transform: translateY(-6px); box-shadow: 0 28px 64px rgba(0,0,0,0.28); }
 
     section {
       padding: 100px 0;
@@ -465,28 +433,124 @@
       background: var(--bg-alt);
     }
 
-    .arch-diagram {
+    .arch-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .arch-layer {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .arch-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 32px;
-      overflow-x: auto;
+      padding: 16px 22px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      min-width: 120px;
+    }
+
+    .arch-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .arch-card .name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--fg);
+    }
+
+    .arch-card .sub {
+      font-size: 0.75rem;
+      color: var(--fg-muted);
+      margin-top: 2px;
+    }
+
+    .arch-card.highlight {
+      border-color: color-mix(in srgb, var(--accent-1) 40%, var(--border));
+      background: linear-gradient(135deg, var(--card-bg), color-mix(in srgb, var(--accent-glow) 60%, var(--card-bg)));
+    }
+
+    .arch-card.highlight .name {
+      color: var(--accent-1);
+    }
+
+    .arch-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0;
+      color: var(--fg-muted);
+      opacity: 0.5;
+    }
+
+    .arch-arrow svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .arch-arrow-branch {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      padding: 4px 0;
+      color: var(--fg-muted);
+      opacity: 0.4;
+    }
+
+    .arch-arrow-branch svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .arch-divider {
+      width: 100%;
+      max-width: 200px;
+      height: 1px;
+      background: var(--border);
+      margin: 6px auto;
+    }
+
+    .arch-dataflow {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 16px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
       box-shadow: var(--card-shadow);
     }
 
-    .arch-diagram pre {
-      font-family: var(--mono);
+    .arch-dataflow .step {
       font-size: 0.8rem;
-      line-height: 1.8;
-      color: var(--fg-muted);
-    }
-
-    .arch-diagram .hl {
-      color: var(--accent-1);
       font-weight: 500;
+      color: var(--fg);
+      padding: 4px 12px;
+      border-radius: 100px;
+      background: var(--accent-glow);
+      color: var(--accent-1);
+      white-space: nowrap;
     }
 
-    .arch-diagram .arrow { color: var(--fg-muted); }
+    .arch-dataflow .arrow {
+      color: var(--fg-muted);
+      font-size: 1.1rem;
+      opacity: 0.5;
+    }
 
     .stack-grid {
       display: grid;
@@ -611,39 +675,6 @@
       font-weight: 500;
     }
 
-    .theme-toggle {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 200;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--fg);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-      transition: all 0.25s;
-      backdrop-filter: blur(8px);
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
-    }
-    .theme-toggle svg {
-      width: 22px;
-      height: 22px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
     @media (max-width: 1024px) {
       .hero .container {
         grid-template-columns: 1fr;
@@ -654,19 +685,20 @@
       .hero-left p { margin: 0 auto 32px; }
       .hero-actions { justify-content: center; }
       .platform-tags { justify-content: center; }
-      .hero-right { min-height: 460px; }
-      .shot-stack { max-width: 420px; height: 460px; }
-      .shot-card.desktop { width: 340px; }
-      .shot-card.mobile { width: 160px; }
+      .hero-right { min-height: 440px; }
+      .shot-card.desktop { width: 300px; }
+      .shot-card.android { width: 160px; }
+      .shot-card.iphone { width: 140px; }
     }
 
     @media (max-width: 768px) {
       .hero { min-height: auto; padding: 100px 0 60px; }
       .hero-left h1 { font-size: 2.2rem; }
-      .hero-right { min-height: 400px; }
-      .shot-stack { max-width: 340px; height: 400px; }
+      .hero-right { min-height: auto; }
+      .shot-stack { flex-wrap: wrap; justify-content: center; gap: 16px; }
       .shot-card.desktop { width: 280px; }
-      .shot-card.mobile { width: 130px; }
+      .shot-card.android { width: 150px; }
+      .shot-card.iphone { width: 130px; }
       .section-title { font-size: 1.6rem; }
       .features-grid { grid-template-columns: 1fr; }
       .stack-grid { grid-template-columns: 1fr; }
@@ -732,13 +764,17 @@
       </div>
       <div class="hero-right">
         <div class="shot-stack">
-          <div class="shot-card desktop">
-            <img id="heroDesktop" src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot">
-            <div class="shot-label" id="heroDesktopLabel">Desktop · Light</div>
+          <div class="shot-card android">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Android screenshot">
+            <div class="shot-label">Android</div>
           </div>
-          <div class="shot-card mobile">
-            <img id="heroMobile" src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Mobile screenshot">
-            <div class="shot-label" id="heroMobileLabel">Mobile · Light</div>
+          <div class="shot-card iphone">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/iphone17_light.png" alt="iOS screenshot">
+            <div class="shot-label">iOS</div>
+          </div>
+          <div class="shot-card desktop">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot">
+            <div class="shot-label">Desktop</div>
           </div>
         </div>
       </div>
@@ -821,16 +857,20 @@
   <section id="screenshots">
     <div class="container">
       <div class="section-label">Screenshots</div>
-      <h2 class="section-title">Desktop preview</h2>
-      <p class="section-sub">Native experience on macOS, Windows, and Linux with Compose Desktop.</p>
+      <h2 class="section-title">One codebase, three platforms</h2>
+      <p class="section-sub">Native experience on Android, iOS, and Desktop — all from shared Kotlin code.</p>
       <div class="screenshot-row">
         <div class="screenshot-card">
-          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode">
-          <div class="screenshot-label">Light Mode</div>
+          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Android screenshot">
+          <div class="screenshot-label">Android</div>
         </div>
         <div class="screenshot-card">
-          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode">
-          <div class="screenshot-label">Dark Mode</div>
+          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/iphone17_light.png" alt="iOS screenshot">
+          <div class="screenshot-label">iOS</div>
+        </div>
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot">
+          <div class="screenshot-label">Desktop</div>
         </div>
       </div>
     </div>
@@ -841,24 +881,79 @@
       <div class="section-label">Architecture</div>
       <h2 class="section-title">Clean, layered design</h2>
       <p class="section-sub">Unidirectional data flow from UI to network to persistence and back.</p>
-      <div class="arch-diagram">
-<pre>
-<span class="hl">Compose Multiplatform UI</span>
-  PostList  FeedList  Settings  ErrorDialog
-        <span class="arrow">|</span>
-        <span class="arrow">v</span>
-<span class="hl">ArticleStore</span> (NanoStore)
-  State / Action / Effect
-        <span class="arrow">|</span>
-   <span class="arrow">/</span>      <span class="arrow">|</span>       <span class="arrow">\</span>
-  <span class="arrow">v</span>       <span class="arrow">v</span>        <span class="arrow">v</span>
-FeedMgr  FeedCache  RssService
-  <span class="arrow">|</span>       <span class="arrow">|</span>         <span class="arrow">|</span>
-  <span class="arrow">v</span>       <span class="arrow">v</span>         <span class="arrow">v</span>
-Settings  Disk JSON  Ktor HTTP + XML
-
-<span class="hl">Data Flow:</span>
-  dispatch(Action) &rarr; Store &rarr; side-effect &rarr; new State &rarr; UI recomposes</pre>
+      <div class="arch-flow">
+        <div class="arch-layer">
+          <div class="arch-card highlight">
+            <div class="name">PostList</div>
+          </div>
+          <div class="arch-card highlight">
+            <div class="name">FeedList</div>
+          </div>
+          <div class="arch-card highlight">
+            <div class="name">Settings</div>
+          </div>
+          <div class="arch-card highlight">
+            <div class="name">ErrorDialog</div>
+          </div>
+        </div>
+        <div class="arch-layer" style="font-size:0.7rem;color:var(--accent-1);font-weight:500;letter-spacing:0.08em;gap:4px;">
+          <span>Compose Multiplatform UI</span>
+        </div>
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-card" style="border-color:var(--accent-1);border-width:2px;">
+            <div class="name">ArticleStore</div>
+            <div class="sub">State / Action / Effect</div>
+          </div>
+        </div>
+        <div class="arch-arrow-branch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-card">
+            <div class="name">FeedMgr</div>
+            <div class="sub">Sync Engine</div>
+          </div>
+          <div class="arch-card">
+            <div class="name">FeedCache</div>
+            <div class="sub">Disk JSON</div>
+          </div>
+          <div class="arch-card">
+            <div class="name">RssService</div>
+            <div class="sub">Ktor HTTP + XML</div>
+          </div>
+        </div>
+        <div class="arch-arrow-branch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-card">
+            <div class="name">Settings</div>
+            <div class="sub">multiplatform-settings</div>
+          </div>
+          <div class="arch-card">
+            <div class="name">Disk JSON</div>
+            <div class="sub">kotlinx.serialization</div>
+          </div>
+          <div class="arch-card">
+            <div class="name">Ktor HTTP</div>
+            <div class="sub">XML Parser</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-divider"></div>
+      <div class="arch-dataflow">
+        <span class="step">dispatch(Action)</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">Store</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">side-effect</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">new State</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">UI recomposes</span>
       </div>
     </div>
   </section>
@@ -912,63 +1007,9 @@ Settings  Disk JSON  Ktor HTTP + XML
     </div>
   </footer>
 
-  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
-    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  </button>
-
   <script>
-    const stored = localStorage.getItem('theme');
-    let current = stored || 'auto';
-    const themeIcon = document.getElementById('themeIcon');
-
-    function applyTheme() {
-      const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      const suffix = isDark ? 'dark' : 'light';
-      const themeLabel = isDark ? 'Dark' : 'Light';
-
-      if (current === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else if (current === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-
-      document.getElementById('heroDesktop').src = `https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_${suffix}.png`;
-      document.getElementById('heroDesktopLabel').textContent = `Desktop · ${themeLabel}`;
-      document.getElementById('heroMobile').src = `https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_${suffix}.png`;
-      document.getElementById('heroMobileLabel').textContent = `Mobile · ${themeLabel}`;
-
-      if (current === 'dark') {
-        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><g stroke-dasharray="2" stroke-dashoffset="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g>';
-      } else if (current === 'light') {
-        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-      } else {
-        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-      }
-    }
-
-    applyTheme();
-
-    function toggleTheme() {
-      if (current === 'dark') {
-        current = 'light';
-        localStorage.setItem('theme', 'light');
-      } else if (current === 'light') {
-        current = 'auto';
-        localStorage.removeItem('theme');
-      } else {
-        current = 'dark';
-        localStorage.setItem('theme', 'dark');
-      }
-      applyTheme();
-    }
+    // Site theme follows system preference — no toggle needed
+    // CSS @media (prefers-color-scheme: dark) handles it automatically
   </script>
 </body>
 </html>

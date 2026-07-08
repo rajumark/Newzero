@@ -6,7 +6,7 @@ import URLImage
 import Foundation
 
 struct PostRow: View {
-    let post: Item
+    let post: ArticleItem
 
     var body: some View {
         if let postURL = post.link, let url = URL(string: postURL) {
@@ -24,7 +24,7 @@ struct PostRow: View {
             if let title = post.title {
                 Text(title.decodeHtmlEntities()).bold().font(.title3)
             }
-            if let imageUrl = post.getImageUrl(), let url = URL(string: imageUrl) {
+            if let imageUrl = post.extractImage(), let url = URL(string: imageUrl) {
                 URLImage(url: url) { image in
                     image
                         .resizable()
@@ -46,7 +46,7 @@ struct PostRow: View {
     }
 }
 
-extension Item {
+extension ArticleItem {
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "E, MMM d HH:mm"

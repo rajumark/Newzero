@@ -6,8 +6,8 @@ import Newzero
 struct FeedsList: ConnectedView {
     
     struct Props {
-        let defaultFeeds: [RssFeed]
-        let userFeeds: [RssFeed]
+        let defaultFeeds: [ArticleFeed]
+        let userFeeds: [ArticleFeed]
         let onAdd: (String) -> ()
         let onRemove: (String) -> ()
     }
@@ -47,4 +47,4 @@ struct FeedsList: ConnectedView {
     }
 }
 
-extension RssFeed: Identifiable { }
+extension ArticleFeed: Identifiable { }

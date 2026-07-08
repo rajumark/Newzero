@@ -6,22 +6,22 @@ struct MainFeedView: ConnectedView {
     
     struct Props {
         let loading: Bool
-        let items: [Item]
+        let items: [ArticleItem]
         let feedOptions: [FeedPickerOption]
         let selectedFeedOption: FeedPickerOption
         
         let onReloadFeed: (Bool) -> Void
-        let onSelectFeed: (RssFeed?) -> Void
+        let onSelectFeed: (ArticleFeed?) -> Void
     }
     
     enum FeedPickerOption: Hashable {
-        case all, feed(RssFeed)
+        case all, feed(ArticleFeed)
         
         var title: String {
             return String((self.feed?.channel?.title ?? "All").prefix(20))
         }
         
-        var feed: RssFeed? {
+        var feed: ArticleFeed? {
             switch self {
             case .all:
                 return nil
@@ -140,4 +140,4 @@ struct MainFeedView: ConnectedView {
     
 }
 
-extension Item: Identifiable { }
+extension ArticleItem: Identifiable { }

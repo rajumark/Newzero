@@ -6,7 +6,7 @@ import URLImage
 import Foundation
 
 struct FeedRow: View {
-    let feed: RssFeed
+    let feed: ArticleFeed
 
     private enum Constants {
         static let imageWidth: CGFloat = 20.0

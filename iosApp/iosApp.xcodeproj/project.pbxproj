@@ -531,7 +531,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					RssReader,
+					Newzero,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rajumark.newzero.iosApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -556,7 +556,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					RssReader,
+					Newzero,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rajumark.newzero.iosApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -13,7 +13,7 @@ struct RSSApp: App {
         DIHelperKt.doInitKoin()
         let helper = DIHelper()
         rss = helper.rssReader
-        store = ObservableArticleStore(store: helper.articleStore)
+        store = ObservableArticleStore(store: helper.feedStore)
     }
   
     var body: some Scene {

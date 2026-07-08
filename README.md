@@ -230,14 +230,29 @@ This transparent conversion means the entire UI layer only ever deals with a sin
 
 ## Screenshots
 
+### Mobile (Android / iOS)
+
 <table>
   <tr>
     <td align="center"><strong>Light Mode</strong></td>
     <td align="center"><strong>Dark Mode</strong></td>
   </tr>
   <tr>
-    <td><img src="screenshots/screenshot_light.png" alt="Light mode" width="320"/></td>
-    <td><img src="screenshots/screenshot_dark.png" alt="Dark mode" width="320"/></td>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Light mode" width="320"/></td>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_dark.png" alt="Dark mode" width="320"/></td>
+  </tr>
+</table>
+
+### Desktop (macOS / Windows / Linux)
+
+<table>
+  <tr>
+    <td align="center"><strong>Light Mode</strong></td>
+    <td align="center"><strong>Dark Mode</strong></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode" width="480"/></td>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode" width="480"/></td>
   </tr>
 </table>
 

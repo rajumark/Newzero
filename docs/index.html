@@ -296,66 +296,90 @@
     .dot.desktop { background: var(--accent-1); }
 
     .hero-right {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: flex-end;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 520px;
     }
 
-    .hero-right .phone {
-      border-radius: var(--radius-lg);
+    .shot-stack {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      height: 520px;
+    }
+
+    .shot-card {
+      position: absolute;
+      border-radius: 16px;
       border: 1px solid var(--border);
       overflow: hidden;
       background: var(--card-bg);
-      box-shadow: var(--card-shadow-hover);
-      transition: all 0.4s;
-      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s;
     }
 
-    .hero-right .phone:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-    }
-
-    .hero-right .phone img {
+    .shot-card img {
       display: block;
       width: 100%;
       height: auto;
     }
 
-    .hero-right .phone-primary {
-      width: 260px;
-      z-index: 2;
-    }
-
-    .hero-right .phone-secondary {
-      width: 220px;
-      z-index: 1;
-      margin-bottom: -20px;
-      opacity: 0.85;
-    }
-
-    .hero-right .phone-secondary:hover {
-      opacity: 1;
-    }
-
-    .hero-right .phone-label {
+    .shot-card .shot-label {
       position: absolute;
-      bottom: 12px;
+      bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--fg-muted);
       background: var(--nav-blur);
       backdrop-filter: blur(8px);
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 100px;
       border: 1px solid var(--border);
+      white-space: nowrap;
     }
+
+    /* Desktop screenshots — large, centered stack */
+    .shot-card.desktop {
+      width: 380px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+    .shot-card.desktop.dark {
+      transform: translate(calc(-50% + 22px), calc(-50% - 22px)) rotate(4deg);
+      z-index: 2;
+      opacity: 0.95;
+    }
+
+    /* Mobile screenshots — smaller, overlapping front corners */
+    .shot-card.mobile {
+      width: 180px;
+      z-index: 4;
+    }
+    .shot-card.mobile.light {
+      bottom: 0;
+      left: -10px;
+    }
+    .shot-card.mobile.dark {
+      top: 0;
+      right: -10px;
+      transform: rotate(-5deg);
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    .shot-card:hover {
+      box-shadow: 0 28px 64px rgba(0,0,0,0.26);
+    }
+    .shot-card.desktop:hover { transform: translate(-50%, -50%) translateY(-6px); }
+    .shot-card.desktop.dark:hover { transform: translate(calc(-50% + 22px), calc(-50% - 22px)) rotate(4deg) translateY(-6px); }
 
     section {
       padding: 100px 0;
@@ -504,6 +528,42 @@
     .stack-item .label { font-weight: 500; }
     .stack-item .value { color: var(--fg-muted); font-size: 0.85rem; }
 
+    .screenshot-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .screenshot-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .screenshot-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .screenshot-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .screenshot-label {
+      text-align: center;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+      border-top: 1px solid var(--border);
+    }
+
     .cta-section {
       text-align: center;
       position: relative;
@@ -608,16 +668,21 @@
       .hero-left p { margin: 0 auto 32px; }
       .hero-actions { justify-content: center; }
       .platform-tags { justify-content: center; }
-      .hero-right .phone-primary { width: 200px; }
-      .hero-right .phone-secondary { width: 170px; }
+      .hero-right { min-height: 460px; }
+      .shot-stack { max-width: 420px; height: 460px; }
+      .shot-card.desktop { width: 340px; }
+      .shot-card.mobile { width: 160px; }
     }
 
     @media (max-width: 768px) {
       .hero { min-height: auto; padding: 100px 0 60px; }
       .hero-left h1 { font-size: 2.2rem; }
-      .hero-right .phone-primary { width: 180px; }
-      .hero-right .phone-secondary { width: 150px; }
-      .hero-right { gap: 12px; }
+      .hero-right { min-height: 400px; }
+      .shot-stack { max-width: 340px; height: 400px; }
+      .shot-card.desktop { width: 280px; }
+      .shot-card.mobile { width: 130px; }
+      .shot-card.desktop.dark { transform: translate(calc(-50% + 16px), calc(-50% - 16px)) rotate(4deg); }
+      .shot-card.mobile.dark { transform: rotate(-5deg); }
       .section-title { font-size: 1.6rem; }
       .features-grid { grid-template-columns: 1fr; }
       .stack-grid { grid-template-columns: 1fr; }
@@ -682,13 +747,23 @@
         </div>
       </div>
       <div class="hero-right">
-        <div class="phone phone-secondary">
-          <img src="../screenshots/screenshot_dark.png" alt="Dark mode">
-          <div class="phone-label">Dark</div>
-        </div>
-        <div class="phone phone-primary">
-          <img src="../screenshots/screenshot_light.png" alt="Light mode">
-          <div class="phone-label">Light</div>
+        <div class="shot-stack">
+          <div class="shot-card desktop dark">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode">
+            <div class="shot-label">Desktop · Dark</div>
+          </div>
+          <div class="shot-card desktop light">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode">
+            <div class="shot-label">Desktop · Light</div>
+          </div>
+          <div class="shot-card mobile dark">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_dark.png" alt="Mobile dark mode">
+            <div class="shot-label">Mobile · Dark</div>
+          </div>
+          <div class="shot-card mobile light">
+            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Mobile light mode">
+            <div class="shot-label">Mobile · Light</div>
+          </div>
         </div>
       </div>
     </div>
@@ -762,6 +837,24 @@
           </div>
           <h3>Open Source</h3>
           <p>MIT licensed. No subscriptions, no ads, no tracking. Free forever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <div class="container">
+      <div class="section-label">Screenshots</div>
+      <h2 class="section-title">Desktop preview</h2>
+      <p class="section-sub">Native experience on macOS, Windows, and Linux with Compose Desktop.</p>
+      <div class="screenshot-row">
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode">
+          <div class="screenshot-label">Light Mode</div>
+        </div>
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode">
+          <div class="screenshot-label">Dark Mode</div>
         </div>
       </div>
     </div>

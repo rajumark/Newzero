@@ -33,7 +33,7 @@ jobs:
       - name: Extract version from build.gradle.kts
         id: version
         run: |
-          VERSION=$(grep 'versionName' androidApp/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          VERSION=$(grep 'versionName = ' androidApp/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
 

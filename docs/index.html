@@ -344,42 +344,28 @@
       white-space: nowrap;
     }
 
-    /* Desktop screenshots — large, centered stack */
+    /* Desktop screenshot — large, centered */
     .shot-card.desktop {
       width: 380px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 3;
-    }
-    .shot-card.desktop.dark {
-      transform: translate(calc(-50% + 22px), calc(-50% - 22px)) rotate(4deg);
       z-index: 2;
-      opacity: 0.95;
     }
 
-    /* Mobile screenshots — smaller, overlapping front corners */
+    /* Mobile — smaller, overlapping bottom-left */
     .shot-card.mobile {
       width: 180px;
-      z-index: 4;
-    }
-    .shot-card.mobile.light {
+      z-index: 3;
+      position: absolute;
       bottom: 0;
       left: -10px;
-    }
-    .shot-card.mobile.dark {
-      top: 0;
-      right: -10px;
-      transform: rotate(-5deg);
-      z-index: 1;
-      opacity: 0.9;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.20);
     }
 
-    .shot-card:hover {
-      box-shadow: 0 28px 64px rgba(0,0,0,0.26);
-    }
-    .shot-card.desktop:hover { transform: translate(-50%, -50%) translateY(-6px); }
-    .shot-card.desktop.dark:hover { transform: translate(calc(-50% + 22px), calc(-50% - 22px)) rotate(4deg) translateY(-6px); }
+    .shot-card.desktop:hover { transform: translate(-50%, -50%) translateY(-6px); filter: brightness(1.05); }
+    .shot-card.mobile:hover { transform: translateY(-6px); filter: brightness(1.05); }
+    .shot-card:hover { box-shadow: 0 28px 64px rgba(0,0,0,0.28); }
 
     section {
       padding: 100px 0;
@@ -681,8 +667,6 @@
       .shot-stack { max-width: 340px; height: 400px; }
       .shot-card.desktop { width: 280px; }
       .shot-card.mobile { width: 130px; }
-      .shot-card.desktop.dark { transform: translate(calc(-50% + 16px), calc(-50% - 16px)) rotate(4deg); }
-      .shot-card.mobile.dark { transform: rotate(-5deg); }
       .section-title { font-size: 1.6rem; }
       .features-grid { grid-template-columns: 1fr; }
       .stack-grid { grid-template-columns: 1fr; }
@@ -748,21 +732,13 @@
       </div>
       <div class="hero-right">
         <div class="shot-stack">
-          <div class="shot-card desktop dark">
-            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode">
-            <div class="shot-label">Desktop · Dark</div>
+          <div class="shot-card desktop">
+            <img id="heroDesktop" src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot">
+            <div class="shot-label" id="heroDesktopLabel">Desktop · Light</div>
           </div>
-          <div class="shot-card desktop light">
-            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode">
-            <div class="shot-label">Desktop · Light</div>
-          </div>
-          <div class="shot-card mobile dark">
-            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_dark.png" alt="Mobile dark mode">
-            <div class="shot-label">Mobile · Dark</div>
-          </div>
-          <div class="shot-card mobile light">
-            <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Mobile light mode">
-            <div class="shot-label">Mobile · Light</div>
+          <div class="shot-card mobile">
+            <img id="heroMobile" src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Mobile screenshot">
+            <div class="shot-label" id="heroMobileLabel">Mobile · Light</div>
           </div>
         </div>
       </div>
@@ -952,14 +928,28 @@ Settings  Disk JSON  Ktor HTTP + XML
     const themeIcon = document.getElementById('themeIcon');
 
     function applyTheme() {
+      const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const suffix = isDark ? 'dark' : 'light';
+      const themeLabel = isDark ? 'Dark' : 'Light';
+
       if (current === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><g stroke-dasharray="2" stroke-dashoffset="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g>';
       } else if (current === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
       } else {
         document.documentElement.removeAttribute('data-theme');
+      }
+
+      document.getElementById('heroDesktop').src = `https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_${suffix}.png`;
+      document.getElementById('heroDesktopLabel').textContent = `Desktop · ${themeLabel}`;
+      document.getElementById('heroMobile').src = `https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_${suffix}.png`;
+      document.getElementById('heroMobileLabel').textContent = `Mobile · ${themeLabel}`;
+
+      if (current === 'dark') {
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><g stroke-dasharray="2" stroke-dashoffset="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g>';
+      } else if (current === 'light') {
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      } else {
         themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
       }
     }

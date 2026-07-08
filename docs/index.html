@@ -4,34 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Newzero — Cross-platform RSS/Atom feed reader built with Kotlin Multiplatform and Compose Multiplatform. Android, iOS, and Desktop from one shared codebase.">
-  <title>Newzero</title>
+  <title>Newzero — Cross-Platform RSS Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #ffffff;
-      --fg: #1a1a2e;
-      --muted: #6b7280;
-      --accent: #5a6577;
-      --accent-hover: #3d4654;
-      --card: #f8f9fb;
-      --border: #e5e7eb;
-      --radius: 8px;
-      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root,
+    [data-theme="light"] {
+      --bg: #f8f9fc;
+      --bg-alt: #ffffff;
+      --fg: #0f172a;
+      --fg-muted: #64748b;
+      --border: #e2e8f0;
+      --accent-1: #6366f1;
+      --accent-2: #8b5cf6;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      --card-bg: #ffffff;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      --nav-blur: rgba(255,255,255,0.8);
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #1a1c1e;
-        --fg: #e1e1e6;
-        --muted: #9ca3af;
-        --accent: #8a95a5;
-        --accent-hover: #a5aebd;
-        --card: #232427;
-        --border: #2d2f33;
+        --bg: #080b16;
+        --bg-alt: #0f1322;
+        --fg: #f1f5f9;
+        --fg-muted: #94a3b8;
+        --border: #1e293b;
+        --accent-1: #818cf8;
+        --accent-2: #a78bfa;
+        --accent-glow: rgba(129, 140, 248, 0.12);
+        --card-bg: #0f1322;
+        --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
+        --nav-blur: rgba(8, 11, 22, 0.85);
       }
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    [data-theme="dark"] {
+      --bg: #080b16;
+      --bg-alt: #0f1322;
+      --fg: #f1f5f9;
+      --fg-muted: #94a3b8;
+      --border: #1e293b;
+      --accent-1: #818cf8;
+      --accent-2: #a78bfa;
+      --accent-glow: rgba(129, 140, 248, 0.12);
+      --card-bg: #0f1322;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
+      --nav-blur: rgba(8, 11, 22, 0.85);
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: var(--font);
@@ -39,509 +71,821 @@
       color: var(--fg);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
+    a { color: var(--accent-1); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-2); }
+
     .container {
-      max-width: 780px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 0 24px;
     }
 
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--accent-hover); }
-
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background: var(--nav-blur);
       border-bottom: 1px solid var(--border);
     }
 
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
     .logo {
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: var(--fg);
+      font-weight: 800;
+      font-size: 1.15rem;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
     }
 
     .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 32px;
       list-style: none;
-      font-size: 0.875rem;
+      align-items: center;
     }
 
-    .nav-links a { color: var(--muted); }
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg-muted);
+      transition: color 0.2s;
+    }
     .nav-links a:hover { color: var(--fg); }
 
-    section { padding: 80px 0; }
-    section:first-of-type { padding-top: 100px; }
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-      line-height: 1.2;
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff !important;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--accent-glow);
     }
 
-    h2 {
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--fg);
       font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hero {
+      padding: 120px 0 80px;
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-left {
+      text-align: left;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: var(--accent-glow);
+      border: 1px solid color-mix(in srgb, var(--accent-1) 20%, transparent);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent-1);
       margin-bottom: 24px;
     }
 
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 620px;
-      margin-bottom: 32px;
+    .hero-left h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 20px;
     }
 
-    .tags {
+    .hero-left h1 span {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-left p {
+      font-size: 1.05rem;
+      color: var(--fg-muted);
+      max-width: 480px;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 32px;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 12px 24px;
-      border-radius: var(--radius);
-      font-weight: 500;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-weight: 600;
       font-size: 0.925rem;
-      transition: all 0.15s;
+      transition: all 0.25s;
+      border: none;
+      cursor: pointer;
     }
 
     .btn-primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--accent-glow);
       color: #fff;
     }
-    .btn-primary:hover { background: var(--accent-hover); color: #fff; }
 
     .btn-outline {
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
       color: var(--fg);
     }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-outline:hover {
+      border-color: var(--accent-1);
+      color: var(--accent-1);
+      transform: translateY(-2px);
+    }
+
+    .platform-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .platform-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+    }
+
+    .platform-tag .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.android { background: #3ddc84; }
+    .dot.ios { background: #000; }
+    .dot.desktop { background: var(--accent-1); }
+
+    .hero-right {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
+    }
+
+    .hero-right .phone {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow-hover);
+      transition: all 0.4s;
+      position: relative;
+    }
+
+    .hero-right .phone:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    }
+
+    .hero-right .phone img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-right .phone-primary {
+      width: 260px;
+      z-index: 2;
+    }
+
+    .hero-right .phone-secondary {
+      width: 220px;
+      z-index: 1;
+      margin-bottom: -20px;
+      opacity: 0.85;
+    }
+
+    .hero-right .phone-secondary:hover {
+      opacity: 1;
+    }
+
+    .hero-right .phone-label {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--fg-muted);
+      background: var(--nav-blur);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+    }
+
+    section {
+      padding: 100px 0;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-1);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: var(--fg-muted);
+      max-width: 560px;
+      margin: 0 auto 56px;
+      font-size: 1.05rem;
+    }
 
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
     }
 
     .feature-card {
-      background: var(--card);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
+      transition: all 0.25s;
+      box-shadow: var(--card-shadow);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow-hover);
+      border-color: color-mix(in srgb, var(--accent-1) 30%, var(--border));
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      background: var(--accent-glow);
+      color: var(--accent-1);
+    }
+
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .feature-card h3 {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .feature-card p {
-      font-size: 0.875rem;
-      color: var(--muted);
+      font-size: 0.9rem;
+      color: var(--fg-muted);
+      line-height: 1.7;
+    }
+
+    .feature-card code {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: var(--bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .arch-section {
+      background: var(--bg-alt);
     }
 
     .arch-diagram {
-      background: var(--card);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
+      overflow-x: auto;
+      box-shadow: var(--card-shadow);
     }
 
     .arch-diagram pre {
       font-family: var(--mono);
       font-size: 0.8rem;
-      line-height: 1.7;
-      overflow-x: auto;
-      color: var(--muted);
+      line-height: 1.8;
+      color: var(--fg-muted);
     }
 
-    .arch-diagram .highlight {
-      color: var(--fg);
+    .arch-diagram .hl {
+      color: var(--accent-1);
       font-weight: 500;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    .arch-diagram .arrow { color: var(--fg-muted); }
 
-    th, td {
-      padding: 10px 0;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
-
-    th {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    td:last-child { color: var(--muted); }
-
-    .platform-cards {
+    .stack-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
     }
 
-    .platform-card {
-      background: var(--card);
+    .stack-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: var(--card-shadow);
+    }
+
+    .stack-item:hover {
+      border-color: color-mix(in srgb, var(--accent-1) 30%, var(--border));
+    }
+
+    .stack-item .label { font-weight: 500; }
+    .stack-item .value { color: var(--fg-muted); font-size: 0.85rem; }
+
+    .cta-section {
       text-align: center;
+      position: relative;
     }
 
-    .platform-card .platform-name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 4px;
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    .platform-card .platform-status {
-      color: var(--muted);
-      font-size: 0.85rem;
+    .cta-section h2 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
     }
 
-    .platform-card .platform-icon {
-      font-size: 2rem;
-      margin-bottom: 8px;
+    .cta-section p {
+      color: var(--fg-muted);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      font-size: 1.05rem;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     footer {
       text-align: center;
       padding: 40px 0;
       border-top: 1px solid var(--border);
-      color: var(--muted);
+      color: var(--fg-muted);
       font-size: 0.85rem;
     }
 
-    .screenshots {
+    footer a { color: var(--fg-muted); }
+    footer a:hover { color: var(--accent-1); }
+
+    footer .social-links {
       display: flex;
-      gap: 24px;
       justify-content: center;
-      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 20px;
     }
 
-    .screenshots figure {
-      margin: 0;
-      text-align: center;
-    }
-
-    .screenshots img {
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      max-width: 320px;
-      height: auto;
-    }
-
-    .screenshots figcaption {
-      margin-top: 8px;
+    footer .social-links a {
       font-size: 0.85rem;
-      color: var(--muted);
+      font-weight: 500;
     }
 
-    @media (max-width: 640px) {
-      h1 { font-size: 1.75rem; }
-      section { padding: 60px 0; }
-      section:first-of-type { padding-top: 60px; }
-      nav { flex-direction: column; gap: 12px; }
-      .arch-diagram pre { font-size: 0.65rem; }
+    .theme-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      transition: all 0.25s;
+      backdrop-filter: blur(8px);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+    }
+    .theme-toggle svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 1024px) {
+      .hero .container {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+      .hero-left { text-align: center; }
+      .hero-left p { margin: 0 auto 32px; }
+      .hero-actions { justify-content: center; }
+      .platform-tags { justify-content: center; }
+      .hero-right .phone-primary { width: 200px; }
+      .hero-right .phone-secondary { width: 170px; }
+    }
+
+    @media (max-width: 768px) {
+      .hero { min-height: auto; padding: 100px 0 60px; }
+      .hero-left h1 { font-size: 2.2rem; }
+      .hero-right .phone-primary { width: 180px; }
+      .hero-right .phone-secondary { width: 150px; }
+      .hero-right { gap: 12px; }
+      .section-title { font-size: 1.6rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stack-grid { grid-template-columns: 1fr; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: var(--nav-blur);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+        padding: 8px 0;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { width: 100%; }
+      .nav-links a {
+        display: block;
+        padding: 12px 24px;
+      }
+      .nav-cta { margin: 8px 24px; justify-content: center; }
+      .mobile-toggle { display: block; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav>
+  <nav>
+    <div class="container">
       <div class="logo">Newzero</div>
+      <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <ul class="nav-links">
         <li><a href="#features">Features</a></li>
         <li><a href="#architecture">Architecture</a></li>
-        <li><a href="#tech-stack">Stack</a></li>
-        <li><a href="#platforms">Platforms</a></li>
-        <li><a href="https://github.com/rajumark/newzero">GitHub</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="https://github.com/rajumark/newzero" class="nav-cta">GitHub &rarr;</a></li>
       </ul>
-    </nav>
-  </div>
+    </div>
+  </nav>
 
-  <section>
+  <section class="hero">
     <div class="container">
-      <h1>Newzero</h1>
-      <p>Cross-platform RSS/Atom feed reader built with Kotlin Multiplatform &amp; Compose Multiplatform. One shared codebase, three platforms.</p>
-      <div class="tags">
-        <span class="tag">Kotlin Multiplatform</span>
-        <span class="tag">Compose Multiplatform</span>
-        <span class="tag">RSS / Atom</span>
-        <span class="tag">Android</span>
-        <span class="tag">iOS</span>
-        <span class="tag">Desktop</span>
+      <div class="hero-left">
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Kotlin Multiplatform + Compose Multiplatform
+        </div>
+        <h1>Read any feed,<br><span>on any device</span></h1>
+        <p>Newzero is a cross-platform RSS &amp; Atom feed reader. One Kotlin codebase delivers a native experience on Android, iOS, and Desktop.</p>
+        <div class="hero-actions">
+          <a href="https://github.com/rajumark/newzero/releases" class="btn btn-primary">Download APK</a>
+          <a href="https://github.com/rajumark/newzero" class="btn btn-outline">View on GitHub</a>
+        </div>
+        <div class="platform-tags">
+          <span class="platform-tag"><span class="dot android"></span> Android 8+</span>
+          <span class="platform-tag"><span class="dot ios"></span> iOS 16+</span>
+          <span class="platform-tag"><span class="dot desktop"></span> macOS / Windows / Linux</span>
+        </div>
       </div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="https://github.com/rajumark/newzero" class="btn btn-primary">View on GitHub</a>
-        <a href="https://github.com/rajumark/newzero/releases" class="btn btn-outline">Download APK</a>
+      <div class="hero-right">
+        <div class="phone phone-secondary">
+          <img src="../screenshots/screenshot_dark.png" alt="Dark mode">
+          <div class="phone-label">Dark</div>
+        </div>
+        <div class="phone phone-primary">
+          <img src="../screenshots/screenshot_light.png" alt="Light mode">
+          <div class="phone-label">Light</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <div class="container">
-    <section id="features">
-      <h2>Features</h2>
+  <section id="features">
+    <div class="container">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything you expect from a modern RSS reader</h2>
+      <p class="section-sub">Built with a clean, Redux-inspired architecture. Offline-first. Beautiful on every platform.</p>
       <div class="features-grid">
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+          </div>
           <h3>RSS 2.0 &amp; Atom</h3>
-          <p>Parses both feed formats using Ktor XML content negotiation with <code>kotlinx.serialization</code>. Automatic format detection.</p>
+          <p>Parses both feed formats using Ktor XML content negotiation with <code>kotlinx.serialization</code>. Automatic format detection from response headers.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
           <h3>Offline-First</h3>
-          <p>Two-tier cache (in-memory + disk) keeps articles available offline. JSON-persisted via <code>multiplatform-settings</code>.</p>
+          <p>Two-tier cache (in-memory + disk via <code>multiplatform-settings</code>) keeps articles available without a network connection.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17 20h-2a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2z"/><path d="M7 20H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2z"/></svg>
+          </div>
           <h3>Material Design 3</h3>
-          <p>Custom Slate color palette with automatic light/dark mode. System-following, manual-light, and manual-dark modes.</p>
+          <p>Custom Slate color palette with light, dark, and system-following modes. Native look and feel on every platform.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </div>
           <h3>Pull-to-Refresh</h3>
-          <p>Material Design 3 styled pull-to-refresh with forced re-fetch. Background sync on Android via WorkManager.</p>
+          <p>MD3-styled pull-to-refresh with forced re-fetch. Android background sync via WorkManager keeps feeds fresh.</p>
         </div>
         <div class="feature-card">
-          <h3>Image Rich</h3>
-          <p>Article thumbnails and feed favicons rendered with Coil 3 (Kotlin Multiplatform image loading library).</p>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3>Rich Images</h3>
+          <p>Article thumbnails and feed favicons rendered with Coil 3, the Kotlin Multiplatform image loading library.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
           <h3>Clean Architecture</h3>
-          <p>Custom Redux-like <code>NanoStore</code> pattern with unidirectional data flow. Sealed Action/Effect classes.</p>
+          <p>Custom <code>NanoStore</code> Redux pattern with sealed <code>Action</code> / <code>Effect</code> classes. Unidirectional data flow, explicit state transitions.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+          </div>
           <h3>Error Dialogs</h3>
           <p>Network and parse errors shown in a clean dialog with one-tap clipboard copy for debugging.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
           <h3>Koin DI</h3>
-          <p>Lightweight dependency injection. Platform-specific modules for Android, iOS, and Desktop with shared common layer.</p>
+          <p>Lightweight dependency injection. Platform-specific modules for Android, iOS, and Desktop sharing a common layer.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
           <h3>Open Source</h3>
           <p>MIT licensed. No subscriptions, no ads, no tracking. Free forever.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="architecture">
-      <h2>Architecture</h2>
+  <section id="architecture" class="arch-section">
+    <div class="container">
+      <div class="section-label">Architecture</div>
+      <h2 class="section-title">Clean, layered design</h2>
+      <p class="section-sub">Unidirectional data flow from UI to network to persistence and back.</p>
       <div class="arch-diagram">
 <pre>
-  ┌─────────────────────────────────────────────────────────────┐
-  │                 Compose Multiplatform UI                    │
-  │  ┌──────────┐  ┌────────────┐  ┌─────────┐  ┌───────────┐  │
-  │  │ PostList │  │ FeedList   │  │Settings │  │ Error     │  │
-  │  │(Articles)│  │(Manage     │  │(Theme   │  │ Dialog    │  │
-  │  │          │  │ Feeds)     │  │ Toggle) │  │           │  │
-  │  └────┬─────┘  └────┬───────┘  └────┬────┘  └─────┬─────┘  │
-  │       └─────────────┴───────────────┴──────────────┘        │
-  │                         │                                   │
-  │              ┌──────────▼───────────┐                       │
-  │              │    ArticleStore      │  State / Action /     │
-  │              │  (NanoStore impl)    │  Effect pattern       │
-  │              └──────────┬───────────┘                       │
-  └─────────────────────────┼───────────────────────────────────┘
-                            │
-              ┌─────────────┼──────────────┐
-              ▼             ▼              ▼
-       ┌────────────┐ ┌───────────┐ ┌──────────────┐
-       │ FeedManager│ │ FeedCache │ │ RssService   │
-       │   Business │ │  Persist  │ │  Ktor HTTP   │
-       │   Logic    │ │           │ │  + XML Parse │
-       └──────┬─────┘ └───────────┘ └──────┬───────┘
-              │                            │
-              ▼                            ▼
-       ┌───────────┐              ┌────────────────┐
-       │multiplatf │              │  RSS / Atom    │
-       │orm-settngs│              │  XML Endpoint  │
-       │(Key-Value)│              │                │
-       └───────────┘              └────────────────┘
+<span class="hl">Compose Multiplatform UI</span>
+  PostList  FeedList  Settings  ErrorDialog
+        <span class="arrow">|</span>
+        <span class="arrow">v</span>
+<span class="hl">ArticleStore</span> (NanoStore)
+  State / Action / Effect
+        <span class="arrow">|</span>
+   <span class="arrow">/</span>      <span class="arrow">|</span>       <span class="arrow">\</span>
+  <span class="arrow">v</span>       <span class="arrow">v</span>        <span class="arrow">v</span>
+FeedMgr  FeedCache  RssService
+  <span class="arrow">|</span>       <span class="arrow">|</span>         <span class="arrow">|</span>
+  <span class="arrow">v</span>       <span class="arrow">v</span>         <span class="arrow">v</span>
+Settings  Disk JSON  Ktor HTTP + XML
 
-  <span class="highlight">Data flow is unidirectional:</span>
-  User Input → dispatch(Action) → Store.process() → async side-effect → new State → UI recompose
-</pre>
+<span class="hl">Data Flow:</span>
+  dispatch(Action) &rarr; Store &rarr; side-effect &rarr; new State &rarr; UI recomposes</pre>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="project-structure">
-      <h2>Project Structure</h2>
-      <div class="arch-diagram">
-<pre>
-  Newzero/
-  ├── <span class="highlight">shared/</span>                    # KMP shared module
-  │   └── src/commonMain/kotlin/
-  │       └── com/rajumark/newzero/
-  │           ├── <span class="highlight">app/</span>              # Redux state management
-  │           │   ├── ArticleStore.kt  # Action dispatch + async ops
-  │           │   └── ReduxCore.kt     # NanoStore interface
-  │           ├── <span class="highlight">core/</span>             # Business logic
-  │           │   ├── FeedManager.kt   # Add/Remove/Load feeds
-  │           │   └── NetworkClient.kt # Ktor config + XML plugins
-  │           ├── <span class="highlight">datasource/</span>        # Data layer
-  │           │   ├── network/         # RssService (HTTP + parse)
-  │           │   └── storage/         # FeedCache (mem + disk)
-  │           ├── <span class="highlight">domain/</span>            # ArticleFeed, AtomFeed models
-  │           └── <span class="highlight">ui/</span>               # Compose shared UI
-  ├── <span class="highlight">androidApp/</span>                # Android (App + WorkManager)
-  ├── <span class="highlight">desktopApp/</span>                # Desktop JVM (macOS/Win/Linux)
-  └── <span class="highlight">iosApp/</span>                    # iOS Xcode wrapper
-</pre>
+  <section id="stack">
+    <div class="container">
+      <div class="section-label">Tech Stack</div>
+      <h2 class="section-title">Modern Kotlin ecosystem</h2>
+      <p class="section-sub">Every library chosen for multiplatform compatibility and developer experience.</p>
+      <div class="stack-grid">
+        <div class="stack-item"><span class="label">Language</span><span class="value">Kotlin 2.3.21</span></div>
+        <div class="stack-item"><span class="label">UI Framework</span><span class="value">Compose Multiplatform 1.11.0</span></div>
+        <div class="stack-item"><span class="label">Design System</span><span class="value">Material Design 3</span></div>
+        <div class="stack-item"><span class="label">Navigation</span><span class="value">Navigation Compose (KMP)</span></div>
+        <div class="stack-item"><span class="label">Networking</span><span class="value">Ktor 3.4.3</span></div>
+        <div class="stack-item"><span class="label">XML Serialization</span><span class="value">xmlutil 0.91.3</span></div>
+        <div class="stack-item"><span class="label">Image Loading</span><span class="value">Coil 3.4.0</span></div>
+        <div class="stack-item"><span class="label">Dependency Injection</span><span class="value">Koin 4.2.1</span></div>
+        <div class="stack-item"><span class="label">Persistence</span><span class="value">multiplatform-settings 1.3.0</span></div>
+        <div class="stack-item"><span class="label">Serialization</span><span class="value">kotlinx.serialization 1.11.0</span></div>
+        <div class="stack-item"><span class="label">Coroutines</span><span class="value">kotlinx.coroutines 1.11.0</span></div>
+        <div class="stack-item"><span class="label">Background Sync</span><span class="value">WorkManager 2.11.2</span></div>
+        <div class="stack-item"><span class="label">Logging</span><span class="value">Napier 2.7.1</span></div>
+        <div class="stack-item"><span class="label">Build System</span><span class="value">Gradle + AGP 9.0.1</span></div>
+        <div class="stack-item"><span class="label">Distributable</span><span class="value">DMG / MSI / DEB</span></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="tech-stack">
-      <h2>Tech Stack</h2>
-      <table>
-        <thead>
-          <tr><th>Layer</th><th>Technology</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Language</td><td>Kotlin 2.3.21</td></tr>
-          <tr><td>UI Framework</td><td>Compose Multiplatform 1.11.0 + Material 3</td></tr>
-          <tr><td>Navigation</td><td>Jetpack Navigation Compose (Multiplatform)</td></tr>
-          <tr><td>Networking</td><td>Ktor 3.4.3 (OkHttp / Darwin engines)</td></tr>
-          <tr><td>XML Parsing</td><td>xmlutil 0.91.3 + ktor-serialization-kotlinx-xml</td></tr>
-          <tr><td>Image Loading</td><td>Coil 3.4.0</td></tr>
-          <tr><td>Dependency Injection</td><td>Koin 4.2.1</td></tr>
-          <tr><td>Persistence</td><td>multiplatform-settings 1.3.0</td></tr>
-          <tr><td>Serialization</td><td>kotlinx.serialization 1.11.0</td></tr>
-          <tr><td>Coroutines</td><td>kotlinx.coroutines 1.11.0</td></tr>
-          <tr><td>Logging</td><td>Napier 2.7.1</td></tr>
-          <tr><td>Background Sync</td><td>Android WorkManager 2.11.2</td></tr>
-          <tr><td>Build System</td><td>Gradle + AGP 9.0.1</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section id="dataflow">
-      <h2>Data Flow: Adding a Feed</h2>
-      <div class="arch-diagram">
-<pre>
-  User types URL → taps "Add"
-         │
-         ▼
-  dispatch(ArticleAction.Add(url))
-         │
-         ▼
-  ArticleStore.addSource(url)
-         │
-         ├─ FeedManager.addSource(url)
-         │     ├─ <span class="highlight">RssService.fetchByUrl(url)</span>
-         │     │     └─ Ktor HTTP GET
-         │     │            │
-         │     │            ├─ Content-Type: <span class="highlight">application/rss+xml</span>
-         │     │            │   └─ Deserialize as ArticleFeed (RSS 2.0)
-         │     │            │
-         │     │            ├─ Content-Type: <span class="highlight">application/atom+xml</span>
-         │     │            │   └─ Deserialize as AtomFeed → convert to ArticleFeed
-         │     │            │
-         │     │            └─ Content-Type: <span class="highlight">application/xml</span>
-         │     │                └─ Try RSS parser
-         │     │
-         │     └─ FeedCache.save(feed)
-         │           ├─ memCache[url] = feed   (instant)
-         │           └─ diskCache = memCache   (JSON → Settings)
-         │
-         ├─ dispatch(ArticleAction.Data(sources))
-         │
-         ▼
-  UI recomposes with new feed
-</pre>
+  <section class="cta-section">
+    <div class="container">
+      <h2>Start reading anywhere</h2>
+      <p>One codebase. Three platforms. MIT licensed. Dive into the code or grab the latest APK.</p>
+      <div class="cta-actions">
+        <a href="https://github.com/rajumark/newzero/releases" class="btn btn-primary">Download APK</a>
+        <a href="https://github.com/rajumark/newzero" class="btn btn-outline">GitHub Repository</a>
       </div>
-    </section>
-
-    <section id="platforms">
-      <h2>Platform Support</h2>
-      <div class="platform-cards">
-        <div class="platform-card">
-          <div class="platform-icon">&#x1F4F1;</div>
-          <div class="platform-name">Android</div>
-          <div class="platform-status">API 26+ (Android 8+) · Target SDK 36</div>
-        </div>
-        <div class="platform-card">
-          <div class="platform-icon">&#x1F4F1;</div>
-          <div class="platform-name">iOS</div>
-          <div class="platform-status">iOS 16+ via SwiftUI wrapper</div>
-        </div>
-        <div class="platform-card">
-          <div class="platform-icon">&#x1F5A5;</div>
-          <div class="platform-name">Desktop</div>
-          <div class="platform-status">macOS · Windows · Linux (Compose Desktop)</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="screenshots">
-      <h2>Screenshots</h2>
-      <div class="screenshots">
-        <figure>
-          <img src="../screenshots/screenshot_light.png" alt="Newzero in Light Mode">
-          <figcaption>Light Mode</figcaption>
-        </figure>
-        <figure>
-          <img src="../screenshots/screenshot_dark.png" alt="Newzero in Dark Mode">
-          <figcaption>Dark Mode</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section>
-      <h2>Quick Start</h2>
-      <div class="arch-diagram">
-<pre>
-  <span class="highlight"># Build shared module (JVM)</span>
-  ./gradlew :shared:compileKotlinJvm
-
-  <span class="highlight"># Install on Android emulator/device</span>
-  ./gradlew :androidApp:installDebug
-
-  <span class="highlight"># Run Desktop app</span>
-  ./gradlew :desktopApp:run
-
-  <span class="highlight"># Build iOS framework (macOS only)</span>
-  ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-  # Open iosApp/iosApp.xcodeproj in Xcode → run
-</pre>
-      </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <footer>
     <div class="container">
+      <div class="social-links">
+        <a href="https://github.com/rajumark/newzero">GitHub</a>
+        <a href="#features">Features</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#stack">Stack</a>
+      </div>
       <p>Built with Kotlin, Compose Multiplatform &amp; Ktor</p>
-      <p style="margin-top:6px"><a href="https://github.com/rajumark/newzero">GitHub</a> &middot; MIT License</p>
+      <p style="margin-top:4px">MIT License / 2025</p>
     </div>
   </footer>
+
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
+  <script>
+    const stored = localStorage.getItem('theme');
+    let current = stored || 'auto';
+    const themeIcon = document.getElementById('themeIcon');
+
+    function applyTheme() {
+      if (current === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><g stroke-dasharray="2" stroke-dashoffset="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g>';
+      } else if (current === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+      }
+    }
+
+    applyTheme();
+
+    function toggleTheme() {
+      if (current === 'dark') {
+        current = 'light';
+        localStorage.setItem('theme', 'light');
+      } else if (current === 'light') {
+        current = 'auto';
+        localStorage.removeItem('theme');
+      } else {
+        current = 'dark';
+        localStorage.setItem('theme', 'dark');
+      }
+      applyTheme();
+    }
+  </script>
 </body>
 </html>

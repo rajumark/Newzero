@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/docs/icon.svg" width="48" height="48" alt="Newzero logo">
+</p>
+
 # Newzero — Cross-Platform RSS Reader
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?logo=kotlin)](https://kotlinlang.org)

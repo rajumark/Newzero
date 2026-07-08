@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Newzero — Cross-platform RSS/Atom feed reader built with Kotlin Multiplatform and Compose Multiplatform. Android, iOS, and Desktop from one shared codebase.">
   <title>Newzero — Cross-Platform RSS Reader</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -87,6 +88,8 @@
     }
 
     .logo {
+      display: inline-flex;
+      align-items: center;
       font-weight: 800;
       font-size: 1.15rem;
       background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
@@ -787,7 +790,10 @@
 <body>
   <nav>
     <div class="container">
-      <div class="logo">Newzero</div>
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="var(--accent-1)" style="margin-right:6px"><path d="M172.31-140Q142-140 121-161q-21-21-21-51.31v-535.38Q100-778 121-799q21-21 51.31-21h615.38Q818-820 839-799q21 21 21 51.31v535.38Q860-182 839-161q-21 21-51.31 21H172.31Zm0-60h615.38q4.62 0 8.46-3.85 3.85-3.84 3.85-8.46v-535.38q0-4.62-3.85-8.46-3.84-3.85-8.46-3.85H172.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v535.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85Zm83.08-95.39h449.22v-59.99H255.39v59.99Zm0-154.61h147.69v-214.61H255.39V-450Zm235.38 0h213.84v-60H490.77v60Zm0-154.62h213.84v-59.99H490.77v59.99ZM160-200v-560 560Z"/></svg>
+        Newzero
+      </div>
       <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>

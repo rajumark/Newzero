@@ -139,12 +139,12 @@
     }
 
     .hero {
-      padding: 120px 0 80px;
+      padding: 0;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: stretch;
     }
 
     .hero::before {
@@ -160,15 +160,20 @@
     }
 
     .hero .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
       width: 100%;
+      padding: 90px 24px 0;
+      justify-content: center;
     }
 
     .hero-left {
-      text-align: left;
+      text-align: center;
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .hero-badge {
@@ -182,7 +187,7 @@
       font-size: 0.8rem;
       font-weight: 500;
       color: var(--accent-1);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .hero-left h1 {
@@ -190,7 +195,7 @@
       font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.1;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .hero-left h1 span {
@@ -201,10 +206,10 @@
     }
 
     .hero-left p {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--fg-muted);
-      max-width: 480px;
-      margin-bottom: 32px;
+      max-width: 520px;
+      margin-bottom: 24px;
       line-height: 1.7;
     }
 
@@ -212,6 +217,7 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn {
@@ -284,8 +290,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding-top: 40px;
       gap: 20px;
-      min-height: 520px;
     }
 
     .shot-stack {
@@ -307,8 +313,8 @@
 
     .shot-card img {
       display: block;
-      width: 100%;
-      height: auto;
+      height: 420px;
+      width: auto;
     }
 
     .shot-card .shot-label {
@@ -328,10 +334,6 @@
       border: 1px solid var(--border);
       white-space: nowrap;
     }
-
-    .shot-card.desktop { width: 380px; }
-    .shot-card.android { width: 200px; }
-    .shot-card.iphone { width: 180px; }
 
     .shot-card:hover { transform: translateY(-6px); box-shadow: 0 28px 64px rgba(0,0,0,0.28); }
 
@@ -578,34 +580,44 @@
     .stack-item .label { font-weight: 500; }
     .stack-item .value { color: var(--fg-muted); font-size: 0.85rem; }
 
-    .screenshot-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    .shots-mobile {
+      display: flex;
+      justify-content: center;
       gap: 24px;
       margin-top: 16px;
+      flex-wrap: wrap;
     }
 
-    .screenshot-card {
+    .shots-desktop {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .shot-fig {
+      margin: 0;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
       box-shadow: var(--card-shadow);
       transition: transform 0.25s, box-shadow 0.25s;
+      display: inline-flex;
+      flex-direction: column;
     }
 
-    .screenshot-card:hover {
+    .shot-fig:hover {
       transform: translateY(-4px);
       box-shadow: var(--card-shadow-hover);
     }
 
-    .screenshot-card img {
+    .shot-fig img {
       display: block;
-      width: 100%;
-      height: auto;
+      height: 420px;
+      width: auto;
     }
 
-    .screenshot-label {
+    .shot-fig figcaption {
       text-align: center;
       padding: 12px;
       font-size: 0.85rem;
@@ -675,33 +687,78 @@
       font-weight: 500;
     }
 
+    .credit-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px 12px 14px;
+      border-radius: 100px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--fg);
+      text-decoration: none;
+      position: relative;
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s;
+    }
+
+    .credit-chip:hover {
+      transform: scale(3);
+      box-shadow: 0 20px 60px var(--accent-glow);
+      border-color: var(--accent-1);
+      z-index: 10;
+    }
+
+    .credit-chip::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 100px;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--accent-glow) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .credit-chip:hover::after {
+      opacity: 1;
+    }
+
+    .credit-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      z-index: 1;
+    }
+
+    .credit-text {
+      position: relative;
+      z-index: 1;
+    }
+
     @media (max-width: 1024px) {
-      .hero .container {
-        grid-template-columns: 1fr;
-        gap: 48px;
-        text-align: center;
-      }
-      .hero-left { text-align: center; }
-      .hero-left p { margin: 0 auto 32px; }
-      .hero-actions { justify-content: center; }
-      .platform-tags { justify-content: center; }
-      .hero-right { min-height: 440px; }
-      .shot-card.desktop { width: 300px; }
-      .shot-card.android { width: 160px; }
-      .shot-card.iphone { width: 140px; }
+      .hero-left h1 { font-size: 2.6rem; }
+      .shot-card img { height: 320px; }
+      .shot-fig img { height: 340px; }
     }
 
     @media (max-width: 768px) {
-      .hero { min-height: auto; padding: 100px 0 60px; }
-      .hero-left h1 { font-size: 2.2rem; }
-      .hero-right { min-height: auto; }
-      .shot-stack { flex-wrap: wrap; justify-content: center; gap: 16px; }
-      .shot-card.desktop { width: 280px; }
-      .shot-card.android { width: 150px; }
-      .shot-card.iphone { width: 130px; }
+      .hero { height: auto; min-height: auto; }
+      .hero .container { padding-top: 80px; }
+      .hero-left { padding: 30px 0 10px; }
+      .hero-left h1 { font-size: 2rem; }
+      .hero-left p { font-size: 0.95rem; }
+      .hero-right { flex: none; padding: 20px 0 40px; }
+      .shot-stack { flex-wrap: wrap; justify-content: center; gap: 14px; }
+      .shot-card img { height: 260px; }
       .section-title { font-size: 1.6rem; }
       .features-grid { grid-template-columns: 1fr; }
       .stack-grid { grid-template-columns: 1fr; }
+      .shot-fig img { height: 280px; }
 
       .nav-links {
         display: none;
@@ -859,19 +916,21 @@
       <div class="section-label">Screenshots</div>
       <h2 class="section-title">One codebase, three platforms</h2>
       <p class="section-sub">Native experience on Android, iOS, and Desktop — all from shared Kotlin code.</p>
-      <div class="screenshot-row">
-        <div class="screenshot-card">
+      <div class="shots-mobile">
+        <figure class="shot-fig">
           <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Android screenshot">
-          <div class="screenshot-label">Android</div>
-        </div>
-        <div class="screenshot-card">
+          <figcaption>Android</figcaption>
+        </figure>
+        <figure class="shot-fig">
           <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/iphone17_light.png" alt="iOS screenshot">
-          <div class="screenshot-label">iOS</div>
-        </div>
-        <div class="screenshot-card">
+          <figcaption>iOS</figcaption>
+        </figure>
+      </div>
+      <div class="shots-desktop">
+        <figure class="shot-fig">
           <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot">
-          <div class="screenshot-label">Desktop</div>
-        </div>
+          <figcaption>Desktop</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -1006,6 +1065,13 @@
       <p style="margin-top:4px">MIT License / 2025</p>
     </div>
   </footer>
+
+  <div style="text-align:center;padding:32px 0 48px">
+    <a href="https://rajumark.github.io/" class="credit-chip" target="_blank">
+      <img src="https://rajumark.github.io/raju_profile_small_image.png" alt="" class="credit-avatar">
+      <span class="credit-text">Raju Shingadiya</span>
+    </a>
+  </div>
 
   <script>
     // Site theme follows system preference — no toggle needed

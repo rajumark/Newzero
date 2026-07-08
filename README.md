@@ -10,6 +10,29 @@
 
 ---
 
+## Screenshots
+
+### Mobile (Android & iOS)
+
+<table>
+  <tr>
+    <td align="center"><strong>Android</strong></td>
+    <td align="center"><strong>iOS</strong></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Android screenshot" width="280"/></td>
+    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/iphone17_light.png" alt="iOS screenshot" width="280"/></td>
+  </tr>
+</table>
+
+### Desktop (macOS / Windows / Linux)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop screenshot" width="600"/>
+</p>
+
+---
+
 ## Features
 
 | Feature | Description |
@@ -225,36 +248,6 @@ The `RssService` inspects the response `Content-Type` header:
 - `application/xml` / `text/xml` → also registered as XML deserializable types
 
 This transparent conversion means the entire UI layer only ever deals with a single `ArticleFeed` model, regardless of the feed format.
-
----
-
-## Screenshots
-
-### Mobile (Android / iOS)
-
-<table>
-  <tr>
-    <td align="center"><strong>Light Mode</strong></td>
-    <td align="center"><strong>Dark Mode</strong></td>
-  </tr>
-  <tr>
-    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_light.png" alt="Light mode" width="320"/></td>
-    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/screenshot_dark.png" alt="Dark mode" width="320"/></td>
-  </tr>
-</table>
-
-### Desktop (macOS / Windows / Linux)
-
-<table>
-  <tr>
-    <td align="center"><strong>Light Mode</strong></td>
-    <td align="center"><strong>Dark Mode</strong></td>
-  </tr>
-  <tr>
-    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_light.png" alt="Desktop light mode" width="480"/></td>
-    <td><img src="https://raw.githubusercontent.com/rajumark/Newzero/main/screenshots/desktop_dark.png" alt="Desktop dark mode" width="480"/></td>
-  </tr>
-</table>
 
 ---
 
